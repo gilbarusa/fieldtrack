@@ -249,6 +249,8 @@ function showPage(page){
   window.scrollTo(0,0);
 }
 
+
+
 //  PROPERTY AUTOCOMPLETE 
 function hlMatch(str,term){
   if(!term) return esc(str);
@@ -427,6 +429,7 @@ function buildJobBody(job, editable, st){
       +'<div style="font-size:11px;color:var(--muted);margin-bottom:8px;font-family:var(--fm)">Photos attached to this job are automatically included in the analysis.</div>'
       +'<div id="ai-chat-'+job.id+'"></div>'
       +'</div>';
+  }
 
   //  SUMMARY 
   var tH=jobTotalHours(job), tL=tH*rate, tE=jobTotalExp(job);
@@ -1359,4 +1362,3 @@ seedDemo();
 initAdminUser();
 if(currentUser) setCurrentUser(currentUser);
 else document.getElementById('login-screen').style.display='flex';
-}
