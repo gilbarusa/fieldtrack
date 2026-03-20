@@ -157,8 +157,8 @@ function restoreNavState(){
 }
 
 //  AUTH 
-document.getElementById('login-pass').addEventListener('keydown',function(e){ if(e.key==='Enter') doLogin(); });
-document.getElementById('login-user').addEventListener('keydown',function(e){ if(e.key==='Enter') document.getElementById('login-pass').focus(); });
+var _lp=document.getElementById('login-pass'); if(_lp) _lp.addEventListener('keydown',function(e){ if(e.key==='Enter') doLogin(); });
+var _lu=document.getElementById('login-user'); if(_lu) _lu.addEventListener('keydown',function(e){ if(e.key==='Enter') document.getElementById('login-pass').focus(); });
 function doLogin(){
   var uname=document.getElementById('login-user').value.trim().toLowerCase();
   var pass=document.getElementById('login-pass').value;
@@ -178,7 +178,7 @@ function setCurrentUser(user){
   document.getElementById('login-screen').style.display='none';
   document.getElementById('app').classList.add('visible');
   renderNav(); updateStorageBar();
-  if(user.role==='admin') showPage('dashboard');
+  if(user.role==='admin') showPage('jobs');
   else showPage('myjobs');
 }
 function doLogout(){
@@ -231,19 +231,21 @@ function showPage(page){
   document.querySelectorAll('.nav-btn').forEach(function(b){ b.classList.remove('active'); });
   var pg=document.getElementById('page-'+page); if(pg) pg.classList.add('active');
   var nb=document.getElementById('nav-'+page); if(nb) nb.classList.add('active');
-  if(page==='myjobs')      renderMyJobs();
-  if(page==='dashboard')   renderDashboard();
-  if(page==='jobs')        renderAllJobs();
-  if(page==='reports')     initReportsPage();
-  if(page==='data')        { updateStorageBar(); populateDeleteSelects(); }
-  if(page==='settings')    renderSettingsPage();
-  if(page==='requests')    renderRequestsPage();
-  if(page==='availability') renderAvailabilityPage();
-  if(page==='shares')      renderSharesPage();
-  if(page==='technicians') renderTechs();
-  if(page==='properties')  renderProps();
-  if(page==='owners')      renderOwners();
-  if(page==='users')       renderUsers();
+  try{
+    if(page==='myjobs'&&typeof renderMyJobs==='function')      renderMyJobs();
+    if(page==='dashboard'&&typeof renderDashboard==='function') renderDashboard();
+    if(page==='jobs'&&typeof renderAllJobs==='function')        renderAllJobs();
+    if(page==='reports'&&typeof initReportsPage==='function')   initReportsPage();
+    if(page==='data'){ if(typeof updateStorageBar==='function') updateStorageBar(); if(typeof populateDeleteSelects==='function') populateDeleteSelects(); }
+    if(page==='settings'&&typeof renderSettingsPage==='function')    renderSettingsPage();
+    if(page==='requests'&&typeof renderRequestsPage==='function')    renderRequestsPage();
+    if(page==='availability'&&typeof renderAvailabilityPage==='function') renderAvailabilityPage();
+    if(page==='shares'&&typeof renderSharesPage==='function')      renderSharesPage();
+    if(page==='technicians'&&typeof renderTechs==='function') renderTechs();
+    if(page==='properties'&&typeof renderProps==='function')  renderProps();
+    if(page==='owners'&&typeof renderOwners==='function')      renderOwners();
+    if(page==='users'&&typeof renderUsers==='function')       renderUsers();
+  }catch(e){ console.error('showPage error:',e); }
   window.scrollTo(0,0);
 }
 
@@ -646,7 +648,7 @@ function openLightbox(photoId){
   var lbl=document.getElementById('lightbox-label'); if(lbl) lbl.textContent=label;
 }
 function closeLightbox(){ document.getElementById('lightbox').classList.remove('open'); document.getElementById('lightbox-img').src=''; }
-document.getElementById('lightbox').addEventListener('click',function(e){ if(e.target===this) closeLightbox(); });
+var _lb=document.getElementById('lightbox'); if(_lb) _lb.addEventListener('click',function(e){ if(e.target===this) closeLightbox(); });
 function markComplete(jobId){
   if(!confirm('Mark as complete?\n'+(isAdmin()?'Admin can still edit it after.':'You will not be able to edit this job anymore.'))) return;
   var job=getJob(jobId); job.status='complete'; job.completedDate=today();
@@ -1036,8 +1038,8 @@ function saveApiKey(){
 
 //  TECHNICIANS 
 function openAddTech(){ document.getElementById('tech-edit-id').value=''; document.getElementById('modal-tech-title').textContent='Add Technician'; ['tech-name','tech-email','tech-phone','tech-rate','tech-username','tech-pin'].forEach(function(id){ document.getElementById(id).value=''; }); document.getElementById('tech-status').value='active'; document.getElementById('tech-login-preview').textContent='username / PIN'; openModal('modal-tech'); }
-document.getElementById('tech-username').addEventListener('input',function(){ document.getElementById('tech-login-preview').textContent=(this.value||'u')+' / '+(document.getElementById('tech-pin').value||'PIN'); });
-document.getElementById('tech-pin').addEventListener('input',function(){ document.getElementById('tech-login-preview').textContent=(document.getElementById('tech-username').value||'u')+' / '+(this.value||'PIN'); });
+var _tu=document.getElementById('tech-username'); if(_tu) _tu.addEventListener('input',function(){ document.getElementById('tech-login-preview').textContent=(this.value||'u')+' / '+(document.getElementById('tech-pin').value||'PIN'); });
+var _tp=document.getElementById('tech-pin'); if(_tp) _tp.addEventListener('input',function(){ document.getElementById('tech-login-preview').textContent=(document.getElementById('tech-username').value||'u')+' / '+(this.value||'PIN'); });
 function editTech(id){ var t=getTech(id); var u=state.users.find(function(u){ return u.techId===id; }); document.getElementById('tech-edit-id').value=id; document.getElementById('modal-tech-title').textContent='Edit Technician'; document.getElementById('tech-name').value=t.name; document.getElementById('tech-rate').value=t.rate; document.getElementById('tech-email').value=t.email||''; document.getElementById('tech-phone').value=t.phone||''; document.getElementById('tech-status').value=t.status; document.getElementById('tech-username').value=u?u.username:''; document.getElementById('tech-pin').value=u?u.password:''; document.getElementById('tech-login-preview').textContent=(u?u.username:'?')+' / '+(u?u.password:'?'); openModal('modal-tech'); }
 function saveTech(){ var name=document.getElementById('tech-name').value.trim(); var rate=document.getElementById('tech-rate').value; var username=document.getElementById('tech-username').value.trim().toLowerCase(); var pin=document.getElementById('tech-pin').value.trim(); if(!name||!rate){ alert('Name and rate required.'); return; } if(!username||!pin){ alert('Username and PIN required.'); return; } var id=document.getElementById('tech-edit-id').value; var dup=state.users.find(function(u){ return u.username===username&&(!id||u.techId!==+id); }); if(dup){ alert('Username taken.'); return; } var obj={name:name,rate:parseFloat(rate),email:document.getElementById('tech-email').value,phone:document.getElementById('tech-phone').value,status:document.getElementById('tech-status').value}; if(id){ Object.assign(state.technicians.find(function(t){ return t.id===+id; }),obj); var u=state.users.find(function(u){ return u.techId===+id; }); if(u){ u.username=username; u.password=pin; u.name=name; u.status=obj.status; } else state.users.push({id:uid(),name:name,username:username,password:pin,role:'tech',techId:+id,status:obj.status}); } else { obj.id=uid(); state.technicians.push(obj); state.users.push({id:uid(),name:name,username:username,password:pin,role:'tech',techId:obj.id,status:obj.status}); } save(); closeModal('modal-tech'); renderTechs(); renderUsers(); }
 function deleteTech(id){ if(!confirm('Delete this technician?')) return; state.technicians=state.technicians.filter(function(t){ return t.id!==+id; }); state.users=state.users.filter(function(u){ return u.techId!==+id; }); save(); renderTechs(); }
