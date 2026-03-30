@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chelbourne — Property Settings | v2026-03-29 22:00</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http%3A//www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%238a5f32'/%3E%3Crect x='10' y='22' width='44' height='36' fill='%23f4ede2'/%3E%3Crect x='8' y='18' width='48' height='6' rx='1' fill='%23c49a6c'/%3E%3Crect x='18' y='10' width='28' height='10' fill='%23e8dcc8'/%3E%3Crect x='16' y='8' width='32' height='4' rx='1' fill='%23c49a6c'/%3E%3Cline x1='10' y1='34' x2='54' y2='34' stroke='%23c49a6c' stroke-width='1'/%3E%3Cline x1='10' y1='44' x2='54' y2='44' stroke='%23c49a6c' stroke-width='1'/%3E%3Crect x='14' y='25' width='7' height='6' rx='1' fill='%235b8fc9'/%3E%3Crect x='25' y='25' width='7' height='6' rx='1' fill='%235b8fc9'/%3E%3Crect x='36' y='25' width='7' height='6' rx='1' fill='%23f0d080'/%3E%3Crect x='47' y='25' width='7' height='6' rx='1' fill='%235b8fc9'/%3E%3Crect x='14' y='36' width='7' height='6' rx='1' fill='%23f0d080'/%3E%3Crect x='25' y='36' width='7' height='6' rx='1' fill='%235b8fc9'/%3E%3Crect x='36' y='36' width='7' height='6' rx='1' fill='%235b8fc9'/%3E%3Crect x='47' y='36' width='7' height='6' rx='1' fill='%23f0d080'/%3E%3Crect x='22' y='12' width='6' height='4' rx='1' fill='%235b8fc9'/%3E%3Crect x='36' y='12' width='6' height='4' rx='1' fill='%23f0d080'/%3E%3Crect x='27' y='46' width='10' height='12' rx='1' fill='%238a5f32'/%3E%3Ccircle cx='35' cy='52' r='1' fill='%23f4ede2'/%3E%3Crect x='0' y='57' width='64' height='7' fill='%236b4e2a'/%3E%3Crect x='24' y='55' width='16' height='3' fill='%23a07840'/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#f0ede7;--surface:#fffefb;--surface2:#f7f4ef;--surface3:#ede9e2;
+  --border:#ddd8ce;--border2:#c8c2b6;
+  --text:#18160f;--text2:#635c4e;--text3:#9e9485;
+  --accent:#b5784a;--accent2:#7d5228;--accent-bg:#f8ede0;
+  --red:#b83228;--red-bg:#fdf1f0;--red-border:#eebfba;
+  --green:#256645;--green-bg:#edf7f2;--green-border:#a8d8be;
+  --blue:#1e5799;--blue-bg:#edf3fb;--blue-border:#a8c8ed;
+  --shadow:0 1px 4px rgba(0,0,0,.06),0 2px 8px rgba(0,0,0,.04);
+  --shadow-md:0 4px 20px rgba(0,0,0,.09),0 1px 4px rgba(0,0,0,.06);
+  --radius:8px;
+}
+body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;min-height:100vh;}
+.header{background:var(--surface);border-bottom:2px solid var(--border);padding:0 28px;height:58px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:200;box-shadow:var(--shadow);}
+.header-brand{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--accent2);letter-spacing:-.3px;white-space:nowrap;}
+.apt-badge{background:var(--accent-bg);border:1px solid var(--accent);color:var(--accent2);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500;}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.back-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);font-family:'DM Mono',monospace;font-size:12px;color:var(--text2);cursor:pointer;transition:all .15s;text-decoration:none;}
+.back-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-bg);}
+.layout{display:flex;min-height:calc(100vh - 58px);}
+.sidebar{width:190px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);padding:16px 0;position:sticky;top:58px;height:calc(100vh - 58px);overflow-y:auto;}
+.sidebar-section{padding:6px 16px 4px;font-size:10px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;font-weight:500;}
+.sidebar-item{display:flex;align-items:center;gap:8px;padding:9px 18px;font-size:12px;color:var(--text2);cursor:pointer;border-left:3px solid transparent;transition:all .15s;}
+.sidebar-item:hover{background:var(--surface2);color:var(--text);}
+.sidebar-item.active{color:var(--accent2);background:var(--accent-bg);border-left-color:var(--accent);font-weight:500;}
+.sidebar-item .dot{width:6px;height:6px;border-radius:50%;background:var(--border2);flex-shrink:0;transition:background .15s;}
+.sidebar-item.active .dot{background:var(--accent);}
+.main{flex:1;min-width:0;padding:24px 32px 80px;}
+.page-hdr{margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.page-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--text);}
+.page-title span{color:var(--accent);}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+.section-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:14px;overflow:hidden;box-shadow:var(--shadow);}
+.section-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:var(--surface2);border-bottom:1px solid var(--border);cursor:pointer;user-select:none;}
+.section-hdr-label{font-size:12px;font-weight:500;color:var(--text);display:flex;align-items:center;gap:8px;}
+.section-chevron{color:var(--text3);font-size:11px;transition:transform .2s;}
+.section-chevron.collapsed{transform:rotate(-90deg);}
+.section-body{padding:20px 20px 16px;}
+.section-body.collapsed{display:none;}
+.form-row{margin-bottom:16px;}
+.form-row label{display:block;font-size:11px;font-weight:500;color:var(--text2);margin-bottom:5px;letter-spacing:.03em;}
+.form-row label .info{color:var(--text3);font-size:10px;font-weight:400;margin-left:4px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 24px;}
+.form-grid .span2{grid-column:1/-1;}
+input[type=text],input[type=number],input[type=url],select,textarea{
+  font-family:'DM Mono',monospace;font-size:12px;color:var(--text);
+  background:var(--surface);border:1px solid var(--border);border-radius:6px;
+  padding:8px 11px;width:100%;outline:none;transition:border-color .15s,box-shadow .15s;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(181,120,74,.1);}
+textarea{resize:vertical;min-height:80px;line-height:1.5;}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239e9485' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;cursor:pointer;-webkit-appearance:none;appearance:none;}
+.char-count{font-size:10px;color:var(--text3);text-align:right;margin-top:3px;}
+.input-addon{display:flex;align-items:center;}
+.input-addon .addon{padding:8px 10px;background:var(--surface2);border:1px solid var(--border);font-size:12px;color:var(--text2);white-space:nowrap;}
+.input-addon .addon.left{border-right:none;border-radius:6px 0 0 6px;}
+.input-addon .addon.right{border-left:none;border-radius:0 6px 6px 0;}
+.input-addon input{border-radius:0;}
+.radio-set{display:flex;gap:20px;flex-wrap:wrap;padding-top:2px;}
+.radio-group,.check-row{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text);cursor:pointer;}
+.radio-group input,.check-row input{accent-color:var(--accent);cursor:pointer;}
+.toggle-wrap{display:flex;align-items:center;gap:10px;}
+.toggle{position:relative;width:36px;height:20px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;inset:0;background:var(--border2);border-radius:20px;cursor:pointer;transition:.2s;}
+.toggle-slider:before{content:'';position:absolute;height:14px;width:14px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;}
+.toggle input:checked + .toggle-slider{background:var(--accent);}
+.toggle input:checked + .toggle-slider:before{transform:translateX(16px);}
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;}
+.photo-card{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--surface);position:relative;transition:box-shadow .15s;}
+.photo-card:hover{box-shadow:var(--shadow-md);}
+.photo-card img{width:100%;height:140px;object-fit:cover;display:block;}
+.photo-card-body{padding:8px;}
+.photo-card-body input{border:none;border-bottom:1px solid var(--border);border-radius:0;padding:4px 2px;font-size:11px;background:transparent;}
+.photo-card-body input:focus{border-bottom-color:var(--accent);box-shadow:none;}
+.photo-actions{position:absolute;top:6px;right:6px;display:flex;gap:4px;}
+.photo-btn{width:26px;height:26px;border-radius:4px;background:rgba(255,255,255,.9);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:11px;transition:all .15s;}
+.photo-btn:hover{background:#fff;border-color:var(--accent);}
+.photo-cover-badge{position:absolute;top:6px;left:6px;background:var(--accent);color:#fff;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500;}
+.photo-upload-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:30px;text-align:center;cursor:pointer;transition:all .15s;color:var(--text3);font-size:12px;position:relative;}
+.photo-upload-zone:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-bg);}
+.amenity-section h4{font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.amenity-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px 12px;}
+.amenity-item{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text);cursor:pointer;padding:3px 0;}
+.amenity-item input[type=checkbox]{accent-color:var(--accent);cursor:pointer;flex-shrink:0;}
+.price-notice{background:var(--accent-bg);border:1px solid var(--accent);border-radius:var(--radius);padding:12px 16px;margin-bottom:16px;display:flex;align-items:flex-start;gap:10px;}
+.price-notice-text{font-size:12px;color:var(--accent2);line-height:1.5;}
+.data-table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;}
+.data-table th{background:var(--surface2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:9px 12px;text-align:left;font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;}
+.data-table th:first-child{border-left:1px solid var(--border);}
+.data-table th:last-child{border-right:1px solid var(--border);}
+.data-table td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text);}
+.data-table tr:last-child td{border-bottom:none;}
+.data-table td:first-child{border-left:1px solid var(--border);}
+.data-table td:last-child{border-right:1px solid var(--border);}
+.data-table tbody tr:hover td{background:var(--surface2);}
+.pct-pos{color:var(--green);font-weight:500;}
+.pct-neg{color:var(--red);font-weight:500;}
+.tbl-link{color:var(--accent);cursor:pointer;text-decoration:none;font-size:11px;background:none;border:none;font-family:'DM Mono',monospace;padding:0;}
+.tbl-link:hover{text-decoration:underline;}
+.rating-summary{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.rating-big{font-size:28px;font-weight:700;color:var(--text);}
+.rating-count{font-size:11px;color:var(--text3);}
+.rating-bar{display:flex;align-items:center;gap:8px;margin-bottom:5px;font-size:11px;}
+.rating-bar-track{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.rating-bar-fill{height:100%;background:var(--accent);border-radius:3px;}
+.rating-cats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;}
+.rating-cat{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px 12px;text-align:center;}
+.rating-cat .label{font-size:10px;color:var(--text3);margin-bottom:2px;}
+.rating-cat .score{font-size:16px;font-weight:700;color:var(--text);}
+.ms-status-badge{display:inline-flex;align-items:center;gap:8px;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:500;}
+.ms-status-badge.active{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;font-family:'DM Mono',monospace;font-size:12px;font-weight:500;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;transition:all .15s;white-space:nowrap;text-decoration:none;}
+.btn:hover{background:var(--surface2);}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-color:var(--accent2);box-shadow:0 2px 8px rgba(181,120,74,.3);}
+.btn-primary:hover{box-shadow:0 4px 14px rgba(181,120,74,.4);transform:translateY(-1px);}
+.btn-secondary{background:var(--surface);border-color:var(--border);color:var(--text2);}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-bg);}
+.btn-bulk{background:var(--surface2);border-color:var(--border2);color:var(--text2);}
+.btn-bulk:hover{border-color:var(--blue);color:var(--blue);}
+.btn-sm{padding:5px 12px;font-size:11px;}
+.btn-danger-link{background:none;border:none;color:var(--red);font-size:11px;font-family:'DM Mono',monospace;cursor:pointer;padding:0;}
+.btn-danger-link:hover{text-decoration:underline;}
+.sticky-footer{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);padding:12px 28px;display:flex;align-items:center;justify-content:flex-end;gap:10px;z-index:100;box-shadow:0 -2px 12px rgba(0,0,0,.06);}
+.toast-wrap{position:fixed;bottom:70px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;}
+.toast{padding:10px 16px;border-radius:var(--radius);font-size:12px;font-weight:500;box-shadow:var(--shadow-md);animation:slideIn .2s ease;display:flex;align-items:center;gap:8px;}
+.toast.success{background:var(--green-bg);border:1px solid var(--green-border);color:var(--green);}
+.toast.error{background:var(--red-bg);border:1px solid var(--red-border);color:var(--red);}
+.toast.info{background:var(--blue-bg);border:1px solid var(--blue-border);color:var(--blue);}
+@keyframes slideIn{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:translateX(0);}}
+.modal-overlay{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.4);align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border-radius:12px;width:90%;max-width:500px;box-shadow:var(--shadow-md);overflow:hidden;}
+.modal-hdr{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.modal-hdr h3{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;}
+.modal-close{background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px;padding:4px;}
+.modal-body{padding:20px;max-height:65vh;overflow-y:auto;}
+.modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;}
+.apt-select-list{display:grid;grid-template-columns:1fr 1fr;gap:6px;max-height:260px;overflow-y:auto;margin-top:12px;padding:4px;}
+.apt-select-item{display:flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:12px;transition:all .15s;}
+.apt-select-item:hover,.apt-select-item.selected{border-color:var(--accent);background:var(--accent-bg);color:var(--accent2);}
+.divider{border:none;border-top:1px solid var(--border);margin:18px 0;}
+.info-banner{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:11px;color:var(--text2);line-height:1.6;margin-bottom:14px;}
+.empty-state{text-align:center;padding:40px 20px;color:var(--text3);}
+.loading{text-align:center;padding:40px;color:var(--text3);font-size:12px;}
+.spinner{display:inline-block;width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin-right:8px;vertical-align:middle;}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div style="display:flex;flex-direction:column;line-height:1.2;">
+    <div class="header-brand">Chelbourne PropDesk</div>
+    <div id="psBuildStamp" style="font-size:9px;color:var(--text3);letter-spacing:.5px;font-family:'DM Mono',monospace;margin-top:2px;"></div>
+  </div>
+  <span style="color:var(--border2);font-size:18px;">›</span>
+  <div style="display:flex;align-items:center;gap:8px;position:relative;">
+    <span id="headerAptBadge" class="apt-badge" onclick="togglePropSwitcher()" style="cursor:pointer;">— ▾</span>
+    <span style="font-size:12px;color:var(--text2);">Property Settings</span>
+    <div id="propSwitcherDrop" style="display:none;position:absolute;top:34px;left:0;background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.14);min-width:260px;max-height:380px;overflow-y:auto;z-index:9999;padding:8px;">
+      <div style="padding:4px 8px 6px;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);">Switch Property</div>
+      <input type="text" id="propSwitchSearch" placeholder="Search…" oninput="filterPropSwitch()" style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:12px;margin-bottom:4px;outline:none;box-sizing:border-box;background:var(--surface2);">
+      <div id="propSwitchList"><div style="padding:8px;font-size:12px;color:var(--text3);">Loading…</div></div>
+    </div>
+  </div>
+  <div class="header-right">
+    <a href="index.html" class="back-btn">← Back to PropDesk</a>
+  </div>
+</div>
+<div id="debugBar" style="background:#1e1e1e;color:#0f0;font-family:monospace;font-size:11px;padding:6px 16px;display:none;">DEBUG: <span id="debugMsg">initializing...</span></div>
+<div class="layout">
+  <nav class="sidebar">
+    <div class="sidebar-section">Property</div>
+    <div class="sidebar-item active" data-tab="main-settings"><span class="dot"></span>Main Settings</div>
+    <div class="sidebar-item" data-tab="descriptions"><span class="dot"></span>Descriptions</div>
+    <div class="sidebar-item" data-tab="photos"><span class="dot"></span>Photos</div>
+    <div class="sidebar-section" style="margin-top:8px;">Channel Data</div>
+    <div class="sidebar-item" data-tab="amenities"><span class="dot"></span>Amenities</div>
+    <div class="sidebar-item" data-tab="pricing"><span class="dot"></span>Pricing</div>
+    <div class="sidebar-item" data-tab="fees-policies"><span class="dot"></span>Fees, Taxes &amp; Policies</div>
+    <div class="sidebar-section" style="margin-top:8px;">More</div>
+    <div class="sidebar-item" data-tab="reviews"><span class="dot"></span>Reviews</div>
+    <div class="sidebar-item" data-tab="service-providers"><span class="dot"></span>Service Providers</div>
+    <div class="sidebar-item" data-tab="owner"><span class="dot"></span>Owner</div>
+  </nav>
+  <main class="main">
+    <!-- MAIN SETTINGS TAB -->
+    <div id="tab-main-settings" class="tab-content active">
+      <div class="page-hdr">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div class="page-title">Main Settings — <span id="ms-apt-title">—</span></div>
+          <div class="ms-status-badge active">● Active</div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-bulk btn-sm" onclick="openBulkModal('main-settings')">⊞ Bulk-Save</button>
+          <button class="btn btn-primary btn-sm" onclick="saveTab('main-settings')">Save Main Settings</button>
+        </div>
+      </div>
+      <div class="section-card">
+        <div class="section-hdr" onclick="toggleSection(this)">
+          <div class="section-hdr-label">🏠 Property Details</div>
+          <span class="section-chevron">▾</span>
+        </div>
+        <div class="section-body">
+          <div class="form-grid">
+            <div class="form-row"><label>Property Type</label><select id="ms-prop-type"><option value="APARTMENT">Apartment</option><option value="CONDO">Condominium</option><option value="HOUSE">House</option><option value="LOFT">Loft</option><option value="STUDIO">Studio</option><option value="TOWNHOUSE">Townhouse</option><option value="VILLA">Villa</option><option value="OTHER">Other</option></select></div>
+            <div class="form-row"><label>Internal Property Name <span class="info">(not public)</span></label><input type="text" id="ms-prop-name" maxlength="49" placeholder="e.g. 1BR 46-128"></div>
+            <div class="form-row"><label>Weblink</label><input type="url" id="ms-weblink" placeholder="https://..."></div>
+            <div class="form-row"><label>Property Size</label><div class="input-addon"><input type="number" id="ms-size" min="0" placeholder="800"><select id="ms-size-unit" class="addon right" style="border-radius:0 6px 6px 0;width:70px;"><option value="ft2">ft²</option><option value="m2">m²</option></select></div></div>
+            <div class="form-row"><label>Number of Floors</label><input type="number" id="ms-floors" min="0" value="0"></div>
+          </div>
+        </div>
+      </div>
+      <div class="section-card">
+        <div class="section-hdr" onclick="toggleSection(this)">
+          <div class="section-hdr-label">📍 Property Address</div>
+          <span class="section-chevron">▾</span>
+        </div>
+        <div class="section-body">
+          <div class="form-grid">
+            <div class="form-row"><label>Address Line 1</label><input type="text" id="ms-addr1" placeholder="Township Line Road"></div>
+            <div class="form-row"><label>Address Line 2</label><input type="text" id="ms-addr2"></div>
+            <div class="form-row"><label>City</label><input type="text" id="ms-city" placeholder="Elkins Park"></div>
+            <div class="form-row"><label>Postal Code</label><input type="text" id="ms-zip" placeholder="19027"></div>
+            <div class="form-row"><label>State</label><input type="text" id="ms-state" placeholder="PA"></div>
+            <div class="form-row"><label>Country</label><select id="ms-country"><option value="US">United States</option><option value="CA">Canada</option><option value="GB">United Kingdom</option></select></div>
+            <div class="form-row"><label>Latitude</label><input type="text" id="ms-lat" placeholder="40.0794226"></div>
+            <div class="form-row"><label>Longitude</label><input type="text" id="ms-lng" placeholder="-75.1145082"></div>
+          </div>
+        </div>
+      </div>
+      <div class="section-card">
+        <div class="section-hdr" onclick="toggleSection(this)">
+          <div class="section-hdr-label">👥 Capacity Details</div>
+          <span class="section-chevron">▾</span>
+        </div>
+        <div class="section-body">
+          <div class="form-grid">
+            <div class="form-row"><label>Bedrooms</label><input type="number" id="ms-bedrooms" min="0" value="1"></div>
+            <div class="form-row"><label>Number of Beds</label><input type="number" id="ms-beds" min="0" value="1"></div>
+            <div class="form-row"><label>Bathrooms</label><input type="number" id="ms-bathrooms" min="0" step="0.5" value="1"></div>
+            <div class="form-row"><label>Base Guests</label><input type="number" id="ms-base-guests" min="1" value="2"></div>
+            <div class="form-row"><label>Max Guests</label><input type="number" id="ms-max-guests" min="1" value="3"></div>
+            <div class="form-row"><label>Extra Guest Fee <span class="info">per guest/night</span></label><div class="input-addon"><span class="addon left">$</span><input type="number" id="ms-extra-fee" min="0" value="10"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="section-card">
+        <div class="section-hdr" onclick="toggleSection(this)">
+          <div class="section-hdr-label">📅 Booking Settings</div>
+          <span class="section-chevron">▾</span>
+        </div>
+        <div class="section-body">
+          <div class="form-grid">
+            <div class="form-row"><label>Booking Type</label><select id="ms-booking-type"><option value="INSTANT_BOOKING">Instant booking</option><option value="BOOKING_REQUEST">Booking request</option><option value="BOOKING_INQUIRY">Booking inquiry</option></select></div>
+            <div class="form-row"><label>Booking Window</label><select id="ms-booking-window"><option value="-1">Unlimited</option><option value="30">1 Month</option><option value="90">3 Months</option><option value="180">6 Months</option><option value="365">12 Months</option><option value="730">24 Months</option></select></div>
+            <div class="form-row"><label>Minimum Stay (nights)</label><input type="number" id="ms-min-stay" min="1" value="7"></div>
+            <div class="form-row"><label>Maximum Stay (nights)</label><input type="number" id="ms-max-stay" min="0" value="365"></div>
+            <div class="form-row"><label>Min. Weekend Stay (nights)</label><input type="number" id="ms-min-weekend-stay" min="1" value="7"></div>
+            <div class="form-row"><label>Turnover Days</label><select id="ms-turnover"><option value="0">0 days</option><option value="1">1 day</option><option value="2">2 days</option><option value="3">3 days</option></select></div>
+            <div class="form-row"><label>Check-in Time</label><select id="ms-checkin-time"><option value="14">14h (2 PM)</option><option value="15">15h (3 PM)</option><option value="16">16h (4 PM)</option><option value="17">17h (5 PM)</option></select></div>
+            <div class="form-row"><label>Checkout Time</label><select id="ms-checkout-time"><option value="10">10h (10 AM)</option><option value="11">11h (11 AM)</option><option value="12">12h (Noon)</option></select></div>
+            <div class="form-row"><label>Booking Lead Time</label><select id="ms-lead-time"><option value="0">0h</option><option value="1">1h</option><option value="2">2h</option><option value="6">6h</option><option value="12">12h</option><option value="24">24h</option><option value="48">48h</option><option value="72">72h</option></select></div>
+            <div class="form-row"><label>% At Reservation</label><div class="input-addon"><input type="number" id="ms-pct-reservation" min="0" max="100" value="50"><span class="addon right">%</span></div></div>
+            <div class="form-row"><label>Collect Balance (days before)</label><div class="input-addon"><input type="number" id="ms-balance-timing" min="0" value="7"><span class="addon right">days</span></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="section-card">
+        <div class="section-hdr" onclick="toggleSection(this)">
+          <div class="section-hdr-label">ℹ️ Property Misc Info</div>
+          <span class="section-chevron">▾</span>
+        </div>
+        <div class="section-body">
+          <div class="form-grid">
+            <div class="form-row"><label>External ID</label><input type="text" id="ms-external-id"></div>
+            <div class="form-row"><label>Accounting ID</label><input type="text" id="ms-accounting-id"></div>
+            <div class="form-row"><label>Rental License #</label><input type="text" id="ms-license"></div>
+            <div class="form-row"><label>License Expiration</label><input type="text" id="ms-license-exp" placeholder="MM/DD/YYYY"></div>
+            <div class="form-row"><label>WiFi Network</label><input type="text" id="ms-wifi-name"></div>
+            <div class="form-row"><label>WiFi Password</label><input type="text" id="ms-wifi-pass"></div>
+          </div>
+        </div>
+      </div>
+      <div class="section-card">
+        <div class="section-hdr" onclick="toggleSection(this)">
+          <div class="section-hdr-label" style="color:#FF5A5F;">✦ Airbnb Settings</div>
+          <span class="section-chevron">▾</span>
+        </div>
+        <div class="section-body">
+          <div class="form-grid">
+            <div class="form-row"><label>Airbnb ID</label><input type="text" id="ms-airbnb-id" placeholder="(read-only — from Hostfully)"></div>
+            <div class="form-row"><label>Listing Type</label><select id="ms-airbnb-listing-type"><option value="ENTIREHOME">Entire Home</option><option value="PRIVATEROOM">Private Room</option><option value="SHAREDROOM">Shared Room</option></select></div>
+            <div class="form-row"><label>Airbnb Booking Type</label><select id="ms-airbnb-booking-type"><option value="INSTANT_BOOKING">Instant booking</option><option value="BOOKING_REQUEST">Booking request</option></select></div>
+            <div class="form-row"><label>Cancellation Policy</label><select id="ms-airbnb-cancel"><option value="flexible">Flexible</option><option value="moderate">Moderate</option><option value="better_strict_with_grace_period">Firm</option><option value="strict">Strict</option></select></div>
+            <div class="form-row"><label>Check-in Option</label><select id="ms-airbnb-checkin-opt"><option value="lockbox">Lockbox</option><option value="smartlock">Smartlock</option><option value="keypad">Keypad</option><option value="host_checkin">Host Check-in</option></select></div>
+            <div class="form-row"><label>Non-Refundable Rate</label><div class="radio-set"><label class="radio-group"><input type="radio" name="ms-nr-rate" value="false" checked> Disabled</label><label class="radio-group"><input type="radio" name="ms-nr-rate" value="true"> Enabled</label></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="section-card">
+        <div class="section-hdr" onclick="toggleSection(this)">
+          <div class="section-hdr-label" style="color:#003580;">● Booking.com Settings</div>
+          <span class="section-chevron">▾</span>
+        </div>
+        <div class="section-body">
+          <div class="form-grid">
+            <div class="form-row"><label>Hotel ID</label><input type="text" id="ms-bcom-hotel-id" placeholder="(read-only)"></div>
+            <div class="form-row"><label>Room ID</label><input type="text" id="ms-bcom-room-id" placeholder="(read-only)"></div>
+            <div class="form-row"><label>Booking.com Booking Type</label><select id="ms-bcom-booking-type"><option value="INSTANT_BOOKING">Instant booking</option><option value="BOOKING_REQUEST">Booking request</option></select></div>
+            <div class="form-row"><label>Room Type</label><select id="ms-bcom-room-type"><option value="Apartment">Apartment</option><option value="Studio">Studio</option><option value="Single">Single</option><option value="Family">Family</option></select></div>
+            <div class="form-row"><label>Primary Check-in Method</label><select id="ms-bcom-checkin"><option value="lock_box">Lock Box</option><option value="door_code">Door Code</option><option value="someone_will_meet">Someone will meet</option><option value="other">Other</option></select></div>
+            <div class="form-row"><label>Status</label><input type="text" id="ms-bcom-status" placeholder="(read-only — from Hostfully)"></div>
+          </div>
+        </div>
+      </div>
+      <div class="section-card">
+        <div class="section-hdr" onclick="toggleSection(this)">
+          <div class="section-hdr-label" style="color:#245ABC;">V Vrbo Settings</div>
+          <span class="section-chevron">▾</span>
+        </div>
+        <div class="section-body">
+          <div class="form-grid">
+            <div class="form-row"><label>Vrbo Property ID</label><input type="text" id="ms-vrbo-id" placeholder="(read-only)"></div>
+            <div class="form-row"><label>Vrbo Booking Type</label><select id="ms-vrbo-booking-type"><option value="INSTANT_BOOKING">Instant booking</option><option value="BOOKING_REQUEST">Booking request</option></select></div>
+            <div class="form-row"><label>Cancellation Policy</label><select id="ms-vrbo-cancel"><option value="relaxed_14">Relaxed — 14 days</option><option value="moderate">Moderate</option><option value="strict">Strict</option></select></div>
+            <div class="form-row"><label>Show Property Location</label><div class="radio-set"><label class="radio-group"><input type="radio" name="ms-vrbo-loc" value="exact"> Exact</label><label class="radio-group"><input type="radio" name="ms-vrbo-loc" value="approx" checked> Approximate</label></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="section-card">
+        <div class="section-hdr" onclick="toggleSection(this)">
+          <div class="section-hdr-label">📝 Property Notes (internal only)</div>
+          <span class="section-chevron collapsed">▾</span>
+        </div>
+        <div class="section-body collapsed">
+          <textarea id="ms-notes" rows="5" placeholder="Internal notes — not shown to guests or channels."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- DESCRIPTIONS TAB -->
+    <div id="tab-descriptions" class="tab-content">
+      <div class="page-hdr">
+        <div><div class="page-title">Descriptions — <span id="desc-apt-title">—</span></div><div style="font-size:11px;color:var(--text3);margin-top:4px;">Changes push to all connected channels on save</div></div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-bulk btn-sm" onclick="openBulkModal('descriptions')">⊞ Bulk Apply</button>
+          <button class="btn btn-primary btn-sm" onclick="saveTab('descriptions')">Save Descriptions</button>
+        </div>
+      </div>
+      <div class="section-card">
+        <div class="section-body">
+          <div class="form-row"><label>Public Name <span class="info">(max 50 chars — listing title on all channels)</span></label><input type="text" id="desc-name" maxlength="50" placeholder="e.g. Stylish 1BR | Moss Rehab | Monthly Discount" oninput="updateCharCount(this,'desc-name-count')"><div class="char-count"><span id="desc-name-count">0</span> / 50</div></div>
+          <div class="form-row"><label>Short Description <span class="info">(max 250 chars)</span></label><textarea id="desc-short" maxlength="250" rows="3" oninput="updateCharCount(this,'desc-short-count')"></textarea><div class="char-count"><span id="desc-short-count">0</span> / 250</div></div>
+          <div class="form-row"><label>Long Description <span class="info">(max 500 chars)</span></label><textarea id="desc-long" maxlength="500" rows="6" oninput="updateCharCount(this,'desc-long-count')"></textarea><div class="char-count"><span id="desc-long-count">0</span> / 500</div></div>
+          <hr class="divider">
+          <div class="form-row"><label>Notes <span class="info">(house rules — sent to guests)</span></label><textarea id="desc-notes" rows="6" oninput="updateCharCount(this,'desc-notes-count')"></textarea><div class="char-count"><span id="desc-notes-count">0</span> chars</div></div>
+          <div class="form-grid">
+            <div class="form-row"><label>Interaction</label><textarea id="desc-interaction" rows="4" oninput="updateCharCount(this,'desc-int-count')"></textarea><div class="char-count"><span id="desc-int-count">0</span></div></div>
+            <div class="form-row"><label>Neighborhood</label><textarea id="desc-neighborhood" rows="4" oninput="updateCharCount(this,'desc-nb-count')"></textarea><div class="char-count"><span id="desc-nb-count">0</span></div></div>
+            <div class="form-row"><label>Access</label><textarea id="desc-access" rows="4" oninput="updateCharCount(this,'desc-acc-count')"></textarea><div class="char-count"><span id="desc-acc-count">0</span></div></div>
+            <div class="form-row"><label>Space</label><textarea id="desc-space" rows="4" oninput="updateCharCount(this,'desc-sp-count')"></textarea><div class="char-count"><span id="desc-sp-count">0</span></div></div>
+            <div class="form-row"><label>Transit</label><textarea id="desc-transit" rows="4" oninput="updateCharCount(this,'desc-tr-count')"></textarea><div class="char-count"><span id="desc-tr-count">0</span></div></div>
+            <div class="form-row"><label>House Manual <span class="info">(sent after booking)</span></label><textarea id="desc-manual" rows="4" oninput="updateCharCount(this,'desc-hm-count')"></textarea><div class="char-count"><span id="desc-hm-count">0</span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHOTOS TAB -->
+    <div id="tab-photos" class="tab-content">
+      <div class="page-hdr">
+        <div><div class="page-title">Photos — <span id="photos-apt-title">—</span></div><div style="font-size:11px;color:var(--text3);margin-top:4px;">First photo is cover on all channels</div></div>
+        <label class="btn btn-secondary btn-sm" style="cursor:pointer;">+ Upload Photos<input type="file" id="photo-upload-input" accept="image/*" multiple style="display:none" onchange="handlePhotoUpload(this)"></label>
+      </div>
+      <div class="info-banner">📸 Photos stored in Supabase Storage bucket: property-photos. Hostfully API integration will sync to all channels.</div>
+      <div id="photo-grid" class="photo-grid"><div class="loading"><span class="spinner"></span>Loading photos…</div></div>
+      <div style="margin-top:16px;">
+        <div class="photo-upload-zone" onclick="document.getElementById('photo-upload-input').click()">
+          <div style="font-size:28px;margin-bottom:8px;">📁</div>
+          <div>Drop photos here or click to upload</div>
+          <div style="font-size:11px;margin-top:4px;">JPG, PNG, WEBP · Max 10MB each</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AMENITIES TAB -->
+    <div id="tab-amenities" class="tab-content">
+      <div class="page-hdr">
+        <div class="page-title">Amenities — <span id="amenities-apt-title">—</span></div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-bulk btn-sm" onclick="openBulkModal('amenities')">⊞ Bulk-Save</button>
+          <button class="btn btn-primary btn-sm" onclick="saveTab('amenities')">Save Amenities</button>
+        </div>
+      </div>
+      <div id="amenities-container"><div class="loading"><span class="spinner"></span>Loading…</div></div>
+    </div>
+    <!-- PRICING TAB -->
+    <div id="tab-pricing" class="tab-content">
+      <div class="page-hdr">
+        <div class="page-title">Pricing — <span id="pricing-apt-title">—</span></div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-bulk btn-sm" onclick="openBulkModal('pricing')">⊞ Bulk-Save</button>
+          <button class="btn btn-primary btn-sm" onclick="saveTab('pricing')">Save Price Settings</button>
+        </div>
+      </div>
+      <div class="price-notice"><span style="color:var(--accent);flex-shrink:0;margin-top:1px;">📅</span><div class="price-notice-text"><strong>Nightly prices live in the Calendar.</strong> Use the PropDesk calendar to set nightly rates, minimum stay, and check-in restrictions per date range. Settings below apply globally unless overridden by the calendar.</div></div>
+      <div class="section-card">
+        <div class="section-hdr" onclick="toggleSection(this)"><div class="section-hdr-label">💲 Price Settings</div><span class="section-chevron">▾</span></div>
+        <div class="section-body">
+          <div class="form-grid">
+            <div class="form-row"><label>Currency</label><select id="price-currency"><option value="USD">US Dollar (USD)</option><option value="EUR">Euro (EUR)</option><option value="GBP">British Pound (GBP)</option></select></div>
+            <div class="form-row"><label>Nightly Base Price</label><div class="input-addon"><span class="addon left">$</span><input type="number" id="price-base" min="0" placeholder="94"></div></div>
+            <div class="form-row"><label>Weekend Rate Adjustment</label><div class="input-addon"><input type="number" id="price-weekend" min="0" max="100" placeholder="0"><span class="addon right">%</span></div></div>
+            <div class="form-row"><label>Tax Rate</label><div class="input-addon"><input type="number" id="price-tax" min="0" max="100" step="0.1" placeholder="16"><span class="addon right">%</span></div></div>
+            <div class="form-row"><label>Security Deposit</label><div class="input-addon"><span class="addon left">$</span><input type="number" id="price-deposit" min="0" placeholder="0"></div></div>
+            <div class="form-row"><label>Cleaning Fee</label><div class="input-addon"><span class="addon left">$</span><input type="number" id="price-cleaning" min="0" placeholder="150"></div></div>
+            <div class="form-row"><label>Cleaning Fee Tax</label><div class="input-addon"><input type="number" id="price-cleaning-tax" min="0" max="100" step="0.1" placeholder="10"><span class="addon right">%</span></div></div>
+          </div>
+          <div class="form-row" style="margin-top:4px;"><label class="check-row" style="cursor:pointer;"><input type="checkbox" id="price-tax-exempt"> Long-term stay tax exemption</label></div>
+        </div>
+      </div>
+      <div class="section-card">
+        <div class="section-hdr"><div class="section-hdr-label">📋 Price Rules</div><button class="btn btn-primary btn-sm" onclick="openAddRuleModal()">+ Add Rule</button></div>
+        <div class="section-body" style="padding:0;">
+          <div style="padding:12px 16px;border-bottom:1px solid var(--border);"><label class="check-row" style="cursor:pointer;"><input type="checkbox" id="override-airbnb"> Override Airbnb Rule Sets with these Pricing Rules</label></div>
+          <div style="overflow-x:auto;padding:16px;">
+            <table class="data-table">
+              <thead><tr><th>Name</th><th>Type</th><th>Channels</th><th>% Change</th><th>Condition</th><th>Actions</th></tr></thead>
+              <tbody id="price-rules-tbody"><tr><td colspan="6" style="text-align:center;color:var(--text3);padding:24px;">No price rules yet. Click <strong>+ Add Rule</strong>.</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FEES, TAXES & POLICIES TAB -->
+    <div id="tab-fees-policies" class="tab-content">
+      <div class="page-hdr">
+        <div class="page-title">Fees, Taxes &amp; Policies — <span id="fees-apt-title">—</span></div>
+        <button class="btn btn-primary btn-sm" onclick="saveTab('fees-policies')">Save</button>
+      </div>
+      <div class="section-card">
+        <div class="section-hdr"><div class="section-hdr-label">💵 Property Fees &amp; Taxes</div><button class="btn btn-primary btn-sm" onclick="openAddFeeModal()">+ Add Item</button></div>
+        <div class="section-body" style="padding:0;">
+          <div style="overflow-x:auto;">
+            <table class="data-table">
+              <thead><tr><th>Name</th><th>Type</th><th>Value</th><th>Tax Rate</th><th>Scope</th><th>Channels</th><th>Applies To</th><th>Actions</th></tr></thead>
+              <tbody id="fees-tbody"><tr><td colspan="8" style="text-align:center;color:var(--text3);padding:24px;">No fees defined. Click <strong>+ Add Item</strong>.</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="section-card">
+        <div class="section-hdr"><div class="section-hdr-label">📋 House Rules</div><button class="btn btn-primary btn-sm" onclick="addListItem('house-rules-list','e.g. No smoking')">+ Add Rule</button></div>
+        <div class="section-body"><div id="house-rules-list"><div style="color:var(--text3);font-size:12px;text-align:center;padding:16px;">No House Rules defined yet.</div></div></div>
+      </div>
+      <div class="section-card">
+        <div class="section-hdr"><div class="section-hdr-label">✅ Property Expectations</div><button class="btn btn-primary btn-sm" onclick="addListItem('expectations-list','e.g. Guests must be at least 25 years old')">+ Add Expectation</button></div>
+        <div class="section-body"><div id="expectations-list"><div style="color:var(--text3);font-size:12px;text-align:center;padding:16px;">No Property Expectations defined yet.</div></div></div>
+      </div>
+      <div class="section-card">
+        <div class="section-hdr" onclick="toggleSection(this)"><div class="section-hdr-label">❌ Cancellation Policy</div><span class="section-chevron">▾</span></div>
+        <div class="section-body">
+          <div class="form-grid">
+            <div class="form-row"><label>Cancellation Policy</label><select id="fees-cancel-policy"><option value="">— Not set —</option><option value="flexible">Flexible</option><option value="moderate">Moderate</option><option value="firm">Firm</option><option value="strict">Strict</option><option value="super_strict_30">Super Strict 30</option></select></div>
+          </div>
+          <div class="form-row"><label>Custom Cancellation Notes</label><textarea id="fees-cancel-notes" rows="4" placeholder="e.g. The guest can cancel free of charge until 10 days before arrival…"></textarea></div>
+        </div>
+      </div>
+      <div class="section-card">
+        <div class="section-hdr" onclick="toggleSection(this)"><div class="section-hdr-label">📄 Rental Conditions</div><span class="section-chevron">▾</span></div>
+        <div class="section-body">
+          <div class="form-row"><label>Definition / Terms</label><textarea id="fees-rental-conditions" rows="6" placeholder="Enter your rental conditions and terms…"></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REVIEWS TAB -->
+    <div id="tab-reviews" class="tab-content">
+      <div class="page-hdr">
+        <div class="page-title">Reviews — <span id="reviews-apt-title">—</span></div>
+        <button class="btn btn-primary btn-sm" onclick="saveTab('reviews')">Save</button>
+      </div>
+      <div class="section-card">
+        <div class="section-hdr"><div class="section-hdr-label">🏠 Direct Booking Reviews</div><button class="btn btn-primary btn-sm" onclick="toast('Add Review via Hostfully direct booking module','info')">+ Add Review</button></div>
+        <div class="section-body">
+          <div class="rating-summary">
+            <div class="rating-big" id="direct-avg">0.00</div>
+            <div><div id="direct-stars" style="color:#f5a623;font-size:14px;">☆☆☆☆☆</div><div class="rating-count" id="direct-count">0 reviews</div></div>
+          </div>
+          <table class="data-table">
+            <thead><tr><th>Date</th><th>Rating</th><th>Guest</th><th>Review</th><th>Actions</th></tr></thead>
+            <tbody id="direct-reviews-tbody"><tr><td colspan="5" style="text-align:center;color:var(--text3);padding:24px;">No Direct Booking Reviews yet.</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="section-card">
+        <div class="section-hdr" onclick="toggleSection(this)"><div class="section-hdr-label" style="color:#FF5A5F;">✦ Airbnb Guest Reviews</div><span class="section-chevron">▾</span></div>
+        <div class="section-body">
+          <div class="form-grid">
+            <div>
+              <div style="font-size:11px;font-weight:500;color:var(--text2);margin-bottom:10px;">Overall Airbnb Rating</div>
+              <div class="rating-summary"><div class="rating-big">5.00</div><div><div style="color:#f5a623;font-size:14px;">★★★★★</div><div class="rating-count">3 reviews</div></div></div>
+              <div style="margin-top:10px;">
+                <div class="rating-bar"><span style="width:12px;text-align:right;color:var(--text3);">5</span><div class="rating-bar-track"><div class="rating-bar-fill" style="width:100%"></div></div></div>
+                <div class="rating-bar"><span style="width:12px;text-align:right;color:var(--text3);">4</span><div class="rating-bar-track"><div class="rating-bar-fill" style="width:33%"></div></div></div>
+                <div class="rating-bar"><span style="width:12px;text-align:right;color:var(--text3);">3</span><div class="rating-bar-track"><div class="rating-bar-fill" style="width:0%"></div></div></div>
+                <div class="rating-bar"><span style="width:12px;text-align:right;color:var(--text3);">2</span><div class="rating-bar-track"><div class="rating-bar-fill" style="width:0%"></div></div></div>
+                <div class="rating-bar"><span style="width:12px;text-align:right;color:var(--text3);">1</span><div class="rating-bar-track"><div class="rating-bar-fill" style="width:0%"></div></div></div>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:11px;font-weight:500;color:var(--text2);margin-bottom:10px;">Category Scores</div>
+              <div class="rating-cats">
+                <div class="rating-cat"><div class="label">Cleanliness</div><div class="score">5</div></div>
+                <div class="rating-cat"><div class="label">Accuracy</div><div class="score">5</div></div>
+                <div class="rating-cat"><div class="label">Check-in</div><div class="score">5</div></div>
+                <div class="rating-cat"><div class="label">Communication</div><div class="score">5</div></div>
+                <div class="rating-cat"><div class="label">Location</div><div class="score">5</div></div>
+                <div class="rating-cat"><div class="label">Value</div><div class="score">5</div></div>
+              </div>
+            </div>
+          </div>
+          <hr class="divider">
+          <div style="font-size:11px;font-weight:500;color:var(--text2);margin-bottom:10px;">Guest Reviews</div>
+          <table class="data-table">
+            <thead><tr><th>Review Date</th><th>Rating</th><th>Guest Name</th><th>Review</th></tr></thead>
+            <tbody>
+              <tr><td>Nov 29, 2025</td><td><span style="color:#f5a623;">★</span> 5</td><td>Olena Petriieva</td><td style="max-width:300px;color:var(--text2);font-size:11px;">Everything was great — clean, warm, and comfortable. The host responded quickly to every request.</td></tr>
+              <tr><td>Nov 2, 2025</td><td><span style="color:#f5a623;">★</span> 5</td><td>Jennifer Levine</td><td style="max-width:300px;color:var(--text2);font-size:11px;">The staff were accommodating and helpful. I had a great experience.</td></tr>
+              <tr><td>Jul 26, 2025</td><td><span style="color:#f5a623;">★</span> 4</td><td>Katie Krcmarik</td><td style="max-width:300px;color:var(--text2);font-size:11px;">Great value. Quiet building, close to Ryers station. One of the best stocked kitchens for cooking.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="section-card">
+        <div class="section-hdr" onclick="toggleSection(this)"><div class="section-hdr-label" style="color:#003580;">● Booking.com Quality Score</div><span class="section-chevron">▾</span></div>
+        <div class="section-body">
+          <div class="rating-cats" style="grid-template-columns:repeat(5,1fr);">
+            <div class="rating-cat"><div class="label">Quality Score</div><div class="score">4</div></div>
+            <div class="rating-cat"><div class="label">Guest Review</div><div class="score">3</div></div>
+            <div class="rating-cat"><div class="label">Content Score</div><div class="score">94</div></div>
+            <div class="rating-cat"><div class="label">Work Friendly</div><div class="score">50</div></div>
+            <div class="rating-cat"><div class="label">Reply Score</div><div class="score">—</div></div>
+          </div>
+          <div style="margin-top:16px;">
+            <div style="font-size:11px;font-weight:500;color:var(--text2);margin-bottom:8px;">How to improve your Quality Score:</div>
+            <div style="font-size:11px;color:var(--text3);line-height:2;">○ Room Facility: Bathrobe<br>○ Hotel Facility: Room service<br>○ Hotel Facility: Dry cleaning<br>○ Hotel Facility: Daily housekeeping<br>○ Room Facility: Tumble dryer</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SERVICE PROVIDERS TAB -->
+    <div id="tab-service-providers" class="tab-content">
+      <div class="page-hdr">
+        <div><div class="page-title">Service Providers — <span id="sp-apt-title">—</span></div><div style="font-size:11px;color:var(--text3);margin-top:4px;">Toggle which providers are active for this property</div></div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-secondary btn-sm">Manage Service Providers ↗</button>
+          <button class="btn btn-primary btn-sm" onclick="saveTab('service-providers')">Save Service Providers</button>
+        </div>
+      </div>
+      <div class="info-banner">📌 Services of recipient type <strong>Host</strong> (or Both) appear in job creation on the property calendar.<br>📌 Services of recipient type <strong>Guest</strong> (or Both) appear as upsell items in your direct website checkout.</div>
+      <div class="section-card">
+        <div class="section-hdr">
+          <div class="section-hdr-label">👷 Providers</div>
+          <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:12px;color:var(--text2);">Toggle all</span><label class="toggle"><input type="checkbox" id="toggle-all-sp" onchange="toggleAllSP(this)"><span class="toggle-slider"></span></label></div>
+        </div>
+        <div class="section-body" style="padding:0;">
+          <div style="overflow-x:auto;">
+            <table class="data-table">
+              <thead><tr><th>Service Provider Name</th><th>Provider Type</th><th>Services</th><th>Status</th></tr></thead>
+              <tbody id="sp-tbody">
+                <tr><td>Anna Chubatiuk</td><td><span style="background:var(--surface2);border:1px solid var(--border);padding:2px 8px;border-radius:4px;font-size:11px;">Cleaner</span></td><td style="color:var(--text2);">Cleaning</td><td><label class="toggle"><input type="checkbox" class="sp-toggle"><span class="toggle-slider"></span></label></td></tr>
+                <tr><td>Ekaterina Shakhova</td><td><span style="background:var(--surface2);border:1px solid var(--border);padding:2px 8px;border-radius:4px;font-size:11px;">Other</span></td><td style="color:var(--text2);">Cleaning 1, Cleaning 2</td><td><label class="toggle"><input type="checkbox" class="sp-toggle"><span class="toggle-slider"></span></label></td></tr>
+                <tr><td>Kate Shakhova</td><td><span style="background:var(--surface2);border:1px solid var(--border);padding:2px 8px;border-radius:4px;font-size:11px;">Cleaner</span></td><td style="color:var(--text2);">Cleaning 3</td><td><label class="toggle"><input type="checkbox" class="sp-toggle" checked><span class="toggle-slider"></span></label></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="section-card">
+        <div class="section-hdr" onclick="toggleSection(this)"><div class="section-hdr-label">📝 Notes to Service Providers</div><span class="section-chevron">▾</span></div>
+        <div class="section-body">
+          <div style="font-size:11px;color:var(--text2);margin-bottom:12px;">These notes will be shown on the Service Provider Portal as maintenance instructions for this property.</div>
+          <div class="form-row"><label>Property Maintenance Instructions</label><textarea id="sp-notes" rows="6" placeholder="e.g. Enter via back door. Trash bins are in the basement. Report any damage before leaving."></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OWNER TAB -->
+    <div id="tab-owner" class="tab-content">
+      <div class="page-hdr">
+        <div class="page-title">Owner — <span id="owner-apt-title">—</span></div>
+        <a href="#" class="btn btn-secondary btn-sm">Manage Owner Adjustments ↗</a>
+      </div>
+      <div class="info-banner">You can add one owner to this property. The owner can log into their Owner Portal, view properties &amp; statements, and create blocked periods on the property calendar.</div>
+      <div class="section-card">
+        <div class="section-hdr"><div class="section-hdr-label">👤 Owner</div></div>
+        <div class="section-body" style="padding:0;">
+          <div style="overflow-x:auto;">
+            <table class="data-table">
+              <thead><tr><th>Name</th><th>Email</th><th>Login Status</th><th>Agency Comm.</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td style="font-weight:500;">ERA Holding LLC</td>
+                  <td style="color:var(--text2);"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d1b4a3b0b9bebdb5b8bfb6a2a1b091b6bcb0b8bdffb2bebc">[email&#160;protected]</a></td>
+                  <td style="color:var(--text3);font-size:11px;">Last login Nov 6, 2024</td>
+                  <td>0%</td>
+                  <td style="display:flex;gap:8px;align-items:center;"><button class="tbl-link">Settings</button><button class="tbl-link">Permissions</button><button class="btn-danger-link">Remove access</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="section-card">
+        <div class="section-hdr" onclick="toggleSection(this)"><div class="section-hdr-label">📡 Communication Settings</div><span class="section-chevron">▾</span></div>
+        <div class="section-body">
+          <div class="form-grid">
+            <div class="form-row"><label>Agency will collect and remit tax</label><div class="radio-set"><label class="radio-group"><input type="radio" name="owner-tax" value="NO" checked> No</label><label class="radio-group"><input type="radio" name="owner-tax" value="YES"> Yes</label></div></div>
+            <div class="form-row"><label>CC owner on confirmed booking emails</label><div class="radio-set"><label class="radio-group"><input type="radio" name="owner-cc" value="NO" checked> No</label><label class="radio-group"><input type="radio" name="owner-cc" value="YES"> Yes</label></div></div>
+            <div class="form-row span2"><label>Notes to owner</label><textarea id="owner-notes" rows="5" placeholder="Internal notes sent to the owner regarding this property…"></textarea></div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;margin-top:8px;"><button class="btn btn-primary btn-sm" onclick="saveTab('owner')">Save Communication Settings</button></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- STICKY FOOTER -->
+<div class="sticky-footer">
+  <span id="save-status" style="font-size:11px;color:var(--text3);margin-right:auto;"></span>
+  <button class="btn btn-bulk" onclick="openBulkModal(currentTab)">⊞ Bulk Apply to Multiple Units</button>
+  <button class="btn btn-primary" onclick="saveCurrentTab()">💾 Save</button>
+</div>
+
+<!-- TOAST -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<!-- BULK MODAL -->
+<div class="modal-overlay" id="bulkModal">
+  <div class="modal">
+    <div class="modal-hdr"><h3>⊞ Bulk Apply Settings</h3><button class="modal-close" onclick="closeBulkModal()">✕</button></div>
+    <div class="modal-body">
+      <p style="font-size:12px;color:var(--text2);line-height:1.6;">Apply current <strong id="bulk-section-label">settings</strong> to selected units. Each unit's existing data for this section will be replaced.</p>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;margin-bottom:6px;"><span style="font-size:11px;color:var(--text3);">Select units:</span><button class="btn btn-secondary btn-sm" onclick="selectAllApts()">Select All</button></div>
+      <div id="apt-select-list" class="apt-select-list"><div class="loading"><span class="spinner"></span>Loading…</div></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-secondary" onclick="closeBulkModal()">Cancel</button><button class="btn btn-primary" onclick="confirmBulkApply()">Apply to Selected</button></div>
+  </div>
+</div>
+
+<!-- ADD PRICE RULE MODAL -->
+<div class="modal-overlay" id="addRuleModal">
+  <div class="modal">
+    <div class="modal-hdr"><h3>Add Price Rule</h3><button class="modal-close" onclick="closeModal('addRuleModal')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row"><label>Rule Name</label><input type="text" id="rule-name" placeholder="e.g. Monthly Discount"></div>
+      <div class="form-grid">
+        <div class="form-row"><label>Type</label><select id="rule-type"><option value="length_discount">Length of stay discount</option><option value="short_premium">Short stay premium</option><option value="early_bird">Early bird discount</option><option value="last_minute">Last minute discount</option></select></div>
+        <div class="form-row"><label>% Change</label><div class="input-addon"><input type="number" id="rule-pct" placeholder="-10"><span class="addon right">%</span></div></div>
+        <div class="form-row"><label>Condition</label><div style="display:flex;gap:8px;align-items:center;"><select id="rule-cond-op" style="width:80px;"><option value="gte">≥</option><option value="lte">≤</option></select><input type="number" id="rule-cond-nights" placeholder="30" min="1"><span style="font-size:11px;color:var(--text3);white-space:nowrap;">nights</span></div></div>
+        <div class="form-row"><label>Channels</label><div style="display:flex;gap:10px;flex-wrap:wrap;padding-top:4px;"><label class="check-row"><input type="checkbox" value="hostfully" checked> Hostfully</label><label class="check-row"><input type="checkbox" value="airbnb" checked> Airbnb</label><label class="check-row"><input type="checkbox" value="vrbo" checked> Vrbo</label><label class="check-row"><input type="checkbox" value="booking" checked> Booking</label></div></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('addRuleModal')">Cancel</button><button class="btn btn-primary" onclick="addPriceRule()">Add Rule</button></div>
+  </div>
+</div>
+
+<!-- ADD FEE MODAL -->
+<div class="modal-overlay" id="addFeeModal">
+  <div class="modal">
+    <div class="modal-hdr"><h3>Add Fee / Tax</h3><button class="modal-close" onclick="closeModal('addFeeModal')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-row span2"><label>Name</label><input type="text" id="fee-name" placeholder="e.g. Pet fees"></div>
+        <div class="form-row"><label>Type</label><select id="fee-type"><option value="Fee">Fee</option><option value="Tax">Tax</option></select></div>
+        <div class="form-row"><label>Value</label><div class="input-addon"><span class="addon left">$</span><input type="number" id="fee-value" min="0" placeholder="0"></div></div>
+        <div class="form-row"><label>Tax Rate</label><div class="input-addon"><input type="number" id="fee-tax" min="0" max="100" value="0"><span class="addon right">%</span></div></div>
+        <div class="form-row"><label>Scope</label><select id="fee-scope"><option value="Per stay">Per stay</option><option value="Per night">Per night</option><option value="Per pet per night">Per pet per night</option><option value="Per person">Per person</option></select></div>
+        <div class="form-row"><label>Channels</label><div style="display:flex;gap:10px;flex-wrap:wrap;padding-top:4px;"><label class="check-row"><input type="checkbox" value="hostfully" checked> Hostfully</label><label class="check-row"><input type="checkbox" value="airbnb" checked> Airbnb</label><label class="check-row"><input type="checkbox" value="vrbo" checked> Vrbo</label><label class="check-row"><input type="checkbox" value="booking" checked> Booking</label></div></div>
+        <div class="form-row"><label>Applies To</label><select id="fee-applies"><option value="this">This property</option><option value="all">All properties</option></select></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('addFeeModal')">Cancel</button><button class="btn btn-primary" onclick="addFee()">Add Fee</button></div>
+  </div>
+</div>
+<script>
+// ── PROP SWITCHER ──────────────────────────────────
+let _allPropsSwitch=[];
+function togglePropSwitcher(){
+  const dd=document.getElementById('propSwitcherDrop');
+  dd.style.display=dd.style.display==='none'?'block':'none';
+  if(dd.style.display==='block') setTimeout(()=>document.getElementById('propSwitchSearch').focus(),50);
+}
+function filterPropSwitch(){
+  const q=(document.getElementById('propSwitchSearch').value||'').toLowerCase();
+  renderPropSwitchList(_allPropsSwitch.filter(p=>(p.name||'').toLowerCase().includes(q)||(p.apt||'').toLowerCase().includes(q)));
+}
+function renderPropSwitchList(props){
+  const list=document.getElementById('propSwitchList');
+  if(!list)return;
+  if(!props.length){list.innerHTML='<div style="padding:8px;font-size:12px;color:var(--text3);">No properties found</div>';return;}
+  list.innerHTML=props.map(p=>{
+    const isCur=String(p.property_uid)===String(currentUid);
+    const meta=[p.apt,p.max_guests?p.max_guests+' guests':null,p.bedrooms!=null?p.bedrooms+' bed':null,p.bathrooms!=null?p.bathrooms+' bath':null].filter(Boolean).join(' · ');
+    const href='property-settings.html?uid='+encodeURIComponent(p.property_uid);
+    return `<div onclick="location.href='${href}'" style="padding:8px 10px;border-radius:8px;cursor:pointer;margin-bottom:2px;background:${isCur?'var(--accent-bg)':'transparent'};border:1px solid ${isCur?'var(--accent)':'transparent'};" onmouseover="this.style.background='var(--accent-bg)'" onmouseout="this.style.background='${isCur?'var(--accent-bg)':'transparent'}'">
+      <div style="font-size:12px;font-weight:500;color:var(--accent2);">${p.name||p.apt}</div>
+      ${meta?`<div style="font-size:10px;color:var(--text3);margin-top:1px;">${meta}</div>`:''}
+    </div>`;
+  }).join('');
+}
+async function loadPropsForSwitch(){
+  try{
+    const {data,error}=await sb.from('properties').select('property_uid,apt,name,bedrooms,bathrooms,max_guests').order('name');
+    if(error) throw error;
+    _allPropsSwitch=data||[];
+    renderPropSwitchList(_allPropsSwitch);
+  }catch(e){console.error('loadPropsForSwitch failed:',e);}
+}
+document.addEventListener('click',function(e){
+  const btn=document.getElementById('headerAptBadge');
+  const dd=document.getElementById('propSwitcherDrop');
+  if(dd&&btn&&!btn.contains(e.target)&&!dd.contains(e.target))dd.style.display='none';
+});
+// ───────────────────────────────────────────────────
+
+function dbg(msg){
+  const bar=document.getElementById('debugBar');
+  const el=document.getElementById('debugMsg');
+  if(bar&&el){bar.style.display='block';el.textContent=msg;console.log('[DEBUG]',msg);}
+}
+const SUPABASE_URL='https://iwohrvkcodqvyoooxzmt.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3b2hydmtjb2Rxdnlvb294em10Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyOTM3OTksImV4cCI6MjA4OTg2OTc5OX0.PhKo6XiXf-VTBWcYkhT_vfHi0ibftNmYaqm4RApxO6Y';
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let currentApt='',currentUid=null,currentPropName='',currentTab='main-settings',allApts=[],priceRules=[],fees=[],photos=[],bulkTargetTab='';
+
+const AMENITY_GROUPS=[
+  {group:'Popular',items:[{key:'coffee_maker',label:'Coffee Maker'},{key:'essentials',label:'Essentials'},{key:'free_parking',label:'Free Parking'},{key:'fridge',label:'Fridge'},{key:'hair_dryer',label:'Hair Dryer'},{key:'heating',label:'Heating'},{key:'wifi',label:'Internet WiFi'},{key:'kitchen',label:'Kitchen'},{key:'microwave',label:'Microwave'},{key:'shampoo',label:'Shampoo'},{key:'tv',label:'TV'},{key:'washer',label:'Washer'}]},
+  {group:'Climate Control',items:[{key:'ac',label:'Air Conditioning'},{key:'ceiling_fan',label:'Ceiling Fan'},{key:'dehumidifier',label:'Dehumidifier'},{key:'hot_water',label:'Hot Water'},{key:'fireplace',label:'Indoor Fireplace'}]},
+  {group:'Kitchen & Dining',items:[{key:'baking_sheet',label:'Baking Sheet'},{key:'blender',label:'Blender'},{key:'cooking_basics',label:'Cooking Basics'},{key:'dishwasher',label:'Dishwasher'},{key:'freezer',label:'Freezer'},{key:'oven',label:'Oven'},{key:'stove',label:'Stove'},{key:'toaster',label:'Toaster'}]},
+  {group:'Bathroom',items:[{key:'bidet',label:'Bidet'},{key:'body_soap',label:'Body Soap'},{key:'conditioner',label:'Conditioner'},{key:'shower_gel',label:'Shower Gel'},{key:'toiletries',label:'Toiletries'},{key:'bathtub',label:'Bathtub'}]},
+  {group:'Laundry',items:[{key:'dryer',label:'Dryer'},{key:'hangers',label:'Hangers'},{key:'iron',label:'Iron'},{key:'linens',label:'Linens Provided'},{key:'towels',label:'Towels Provided'},{key:'wardrobe',label:'Wardrobe'}]},
+  {group:'Safety',items:[{key:'alarm',label:'Alarm System'},{key:'co_detector',label:'CO Detector'},{key:'fire_extinguisher',label:'Fire Extinguisher'},{key:'first_aid',label:'First Aid Kit'},{key:'safe',label:'Safe'},{key:'smoke_detector',label:'Smoke Detector'}]},
+  {group:'Entertainment',items:[{key:'board_games',label:'Board Games'},{key:'game_console',label:'Game Console'},{key:'streaming',label:'Streaming Services'}]},
+  {group:'Outdoor',items:[{key:'balcony',label:'Balcony/Patio'},{key:'bbq',label:'BBQ'},{key:'garden',label:'Garden'},{key:'hot_tub',label:'Hot Tub'},{key:'pool',label:'Pool'},{key:'outdoor_seating',label:'Outdoor Seating'},{key:'ev_charger',label:'EV Charger'},{key:'paid_parking',label:'Paid Parking'}]},
+  {group:'Family',items:[{key:'crib',label:'Pack n Play / Crib'},{key:'room_darkening',label:'Room-darkening Shades'},{key:'stair_gates',label:'Stair Gates'},{key:'high_chair',label:'High Chair'}]},
+  {group:'Accessibility',items:[{key:'elevator',label:'Elevator'},{key:'single_level',label:'Single Level Home'},{key:'wheelchair',label:'Wheelchair Accessible'}]},
+  {group:'Work & Office',items:[{key:'desk',label:'Desk'},{key:'desk_chair',label:'Desk Chair'},{key:'printer',label:'Printer'}]},
+  {group:'Rules & Policies',items:[{key:'allows_pets',label:'Allows Pets'},{key:'allows_smoking',label:'Allows Smoking'},{key:'family_friendly',label:'Family Friendly'},{key:'event_friendly',label:'Event Friendly'}]},
+];
+
+window.addEventListener('DOMContentLoaded',async()=>{
+  const params=new URLSearchParams(location.search);
+  // Set build stamp
+  const psM=document.title.match(/v(\d{4}-\d{2}-\d{2} \d{2}:\d{2})/);
+  const psEl=document.getElementById('psBuildStamp');
+  if(psEl&&psM){const[y,mo,d]=psM[1].split(' ')[0].split('-');const mn=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];psEl.textContent=mn[+mo-1]+' '+parseInt(d)+' '+y+' '+psM[1].split(' ')[1];}
+
+  // Support both ?uid=10001 and legacy ?apt=128
+  currentApt = params.get('apt') || '';
+  currentUid = params.get('uid') || null;
+
+  if(!currentApt && !currentUid){
+    document.getElementById('headerAptBadge').textContent = 'Select property ▾';
+    setTimeout(()=>togglePropSwitcher(), 400);
+  } else {
+    document.getElementById('headerAptBadge').textContent = (currentApt || currentUid) + ' ▾';
+  }
+  buildAmenitiesUI();
+  await Promise.all([loadApts(), loadPropsForSwitch()]);
+  if(currentUid || currentApt) await loadSettings();
+  document.querySelectorAll('.sidebar-item[data-tab]').forEach(el=>{el.addEventListener('click',()=>switchTab(el.dataset.tab));});
+});
+
+function updateAptTitles(apt){document.querySelectorAll('[id$="-apt-title"]').forEach(el=>el.textContent=apt);}
+
+function switchTab(tab){
+  currentTab=tab;
+  document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(el=>el.classList.remove('active'));
+  const tc=document.getElementById('tab-'+tab);
+  if(tc)tc.classList.add('active');
+  document.querySelector('.sidebar-item[data-tab="'+tab+'"]')?.classList.add('active');
+}
+
+async function loadApts(){
+  try{const {data}=await sb.from('units').select('id,apt,name').eq('archived',false).order('apt');allApts=data||[];}
+  catch(e){allApts=[];}
+}
+
+async function loadSettings(){
+  try{
+    let prop=null;
+
+    // Step 1: resolve property row by property_uid or apt
+    if(currentUid){
+      const {data,error}=await sb.from('properties').select('*').eq('property_uid',currentUid).single();
+      if(error) throw new Error('Property lookup failed (uid='+currentUid+'): '+error.message);
+      prop=data;
+    } else if(currentApt){
+      const {data,error}=await sb.from('properties').select('*').eq('apt',currentApt).single();
+      if(error) throw new Error('Property lookup failed (apt='+currentApt+'): '+error.message);
+      prop=data;
+    }
+
+    if(!prop){ toast('Property not found','error'); dbg('prop not found for uid='+currentUid+' apt='+currentApt); return; }
+
+    currentApt=prop.apt||currentApt;
+    currentUid=String(prop.property_uid||currentUid||'');
+    currentPropName=prop.name||prop.apt||('Property '+currentUid);
+    dbg('resolved: apt='+currentApt+' name='+currentPropName+' uid='+currentUid);
+
+    document.getElementById('headerAptBadge').textContent=currentPropName+' ▾';
+    updateAptTitles(currentPropName);
+
+    // Step 2: populate base values from properties table
+    populateMainSettings({
+      prop_name:    prop.apt||'',
+      weblink:      prop.hostfully_listing_url||'',
+      addr1:        prop.address||'',
+      city:         prop.city||'',
+      zip:          prop.zip||'',
+      state:        prop.state||'',
+      lat:          prop.latitude||'',
+      lng:          prop.longitude||'',
+      bedrooms:     prop.bedrooms??'',
+      bathrooms:    prop.bathrooms??'',
+      max_guests:   prop.max_guests??'',
+      min_stay:     prop.min_stay??'',
+      airbnb_id:    prop.airbnb_id||'',
+      vrbo_id:      prop.vrbo_id||'',
+      notes:        prop.notes||''
+    });
+
+    // Step 3: overlay with saved property_settings if exists
+    const {data:ps,error:psErr}=await sb.from('property_settings').select('*').eq('apt',currentApt).single();
+    if(psErr&&psErr.code!=='PGRST116') console.warn('property_settings:',psErr.message);
+
+    if(!ps){ renderPhotos(); return; }
+    if(ps.main_settings) populateMainSettings(ps.main_settings);
+    if(ps.descriptions)  populateDescriptions(ps.descriptions);
+    if(ps.pricing)       populatePricing(ps.pricing);
+    if(ps.amenities)     populateAmenities(ps.amenities);
+    if(ps.fees_policies) populateFeesData(ps.fees_policies);
+    if(ps.service_providers) populateServiceProviders(ps.service_providers);
+    if(ps.owner_info)    populateOwner(ps.owner_info);
+    photos=ps.photos||[]; renderPhotos();
+    priceRules=(ps.pricing||{}).rules||[]; renderPriceRules();
+    fees=(ps.fees_policies||{}).fees||[]; renderFeesTable();
+
+  }catch(e){
+    console.error('loadSettings failed:',e);
+    toast('Load failed: '+e.message,'error');
+    renderPhotos();
+  }
+}
+
+// ── MAIN SETTINGS ──────────────────────────
+function populateMainSettings(d){
+  const ids={prop_type:'ms-prop-type',prop_name:'ms-prop-name',weblink:'ms-weblink',size:'ms-size',size_unit:'ms-size-unit',floors:'ms-floors',addr1:'ms-addr1',addr2:'ms-addr2',city:'ms-city',zip:'ms-zip',state:'ms-state',lat:'ms-lat',lng:'ms-lng',bedrooms:'ms-bedrooms',beds:'ms-beds',bathrooms:'ms-bathrooms',base_guests:'ms-base-guests',max_guests:'ms-max-guests',extra_fee:'ms-extra-fee',min_stay:'ms-min-stay',max_stay:'ms-max-stay',min_weekend_stay:'ms-min-weekend-stay',wifi_name:'ms-wifi-name',wifi_pass:'ms-wifi-pass',external_id:'ms-external-id',accounting_id:'ms-accounting-id',license:'ms-license',license_exp:'ms-license-exp',airbnb_id:'ms-airbnb-id',bcom_hotel_id:'ms-bcom-hotel-id',bcom_room_id:'ms-bcom-room-id',bcom_status:'ms-bcom-status',vrbo_id:'ms-vrbo-id',notes:'ms-notes',booking_type:'ms-booking-type',airbnb_listing_type:'ms-airbnb-listing-type',airbnb_booking_type:'ms-airbnb-booking-type',airbnb_cancel:'ms-airbnb-cancel',bcom_booking_type:'ms-bcom-booking-type',vrbo_booking_type:'ms-vrbo-booking-type'};
+  Object.entries(ids).forEach(([k,id])=>{if(d[k]!==undefined&&d[k]!==null){const el=document.getElementById(id);if(el)el.value=d[k];}});
+}
+function collectMainSettings(){
+  const g=id=>{const el=document.getElementById(id);return el?el.value:''};
+  const gn=id=>{const v=g(id);return v!==''&&v!==undefined?parseFloat(v):undefined};
+  return{prop_type:g('ms-prop-type'),prop_name:g('ms-prop-name'),weblink:g('ms-weblink'),size:gn('ms-size'),size_unit:g('ms-size-unit'),floors:gn('ms-floors'),addr1:g('ms-addr1'),addr2:g('ms-addr2'),city:g('ms-city'),zip:g('ms-zip'),state:g('ms-state'),lat:g('ms-lat'),lng:g('ms-lng'),bedrooms:gn('ms-bedrooms'),beds:gn('ms-beds'),bathrooms:gn('ms-bathrooms'),base_guests:gn('ms-base-guests'),max_guests:gn('ms-max-guests'),extra_fee:gn('ms-extra-fee'),min_stay:gn('ms-min-stay'),max_stay:gn('ms-max-stay'),min_weekend_stay:gn('ms-min-weekend-stay'),wifi_name:g('ms-wifi-name'),wifi_pass:g('ms-wifi-pass'),external_id:g('ms-external-id'),accounting_id:g('ms-accounting-id'),license:g('ms-license'),license_exp:g('ms-license-exp'),airbnb_id:g('ms-airbnb-id'),bcom_hotel_id:g('ms-bcom-hotel-id'),bcom_room_id:g('ms-bcom-room-id'),vrbo_id:g('ms-vrbo-id'),notes:g('ms-notes'),booking_type:g('ms-booking-type'),airbnb_listing_type:g('ms-airbnb-listing-type'),airbnb_booking_type:g('ms-airbnb-booking-type'),airbnb_cancel:g('ms-airbnb-cancel'),bcom_booking_type:g('ms-bcom-booking-type'),vrbo_booking_type:g('ms-vrbo-booking-type')};
+}
+
+// ── DESCRIPTIONS ───────────────────────────
+function populateDescriptions(d){['name','short','long','notes','interaction','neighborhood','access','space','transit','manual'].forEach(f=>{const el=document.getElementById('desc-'+f);if(el&&d[f]){el.value=d[f];updateCharCount(el,'desc-'+f+'-count');}});}
+function collectDescriptions(){const g=f=>document.getElementById('desc-'+f)?.value||'';return{name:g('name'),short:g('short'),long:g('long'),notes:g('notes'),interaction:g('interaction'),neighborhood:g('neighborhood'),access:g('access'),space:g('space'),transit:g('transit'),manual:g('manual')};}
+
+// ── PRICING ────────────────────────────────
+function populatePricing(p){const set=(id,val)=>{if(val!==undefined){const el=document.getElementById(id);if(el)el.value=val;}};set('price-currency',p.currency);set('price-base',p.base);set('price-weekend',p.weekend);set('price-tax',p.tax);set('price-deposit',p.deposit);set('price-cleaning',p.cleaning);set('price-cleaning-tax',p.cleaning_tax);if(p.tax_exempt)document.getElementById('price-tax-exempt').checked=p.tax_exempt;if(p.override_airbnb)document.getElementById('override-airbnb').checked=p.override_airbnb;}
+function collectPricing(){const g=id=>document.getElementById(id)?.value;const gn=id=>{const v=g(id);return v!==''&&v!==undefined?parseFloat(v):undefined};return{currency:g('price-currency'),base:gn('price-base'),weekend:gn('price-weekend'),tax:gn('price-tax'),deposit:gn('price-deposit'),cleaning:gn('price-cleaning'),cleaning_tax:gn('price-cleaning-tax'),tax_exempt:document.getElementById('price-tax-exempt')?.checked,override_airbnb:document.getElementById('override-airbnb')?.checked,rules:priceRules};}
+function renderPriceRules(){
+  const tbody=document.getElementById('price-rules-tbody');
+  if(!priceRules.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:24px;">No price rules yet.</td></tr>';return;}
+  const labels={length_discount:'Length of stay',short_premium:'Short stay',early_bird:'Early bird',last_minute:'Last minute'};
+  tbody.innerHTML=priceRules.map((r,i)=>`<tr><td>${r.name||'—'}</td><td style="font-size:11px;color:var(--text2);">${labels[r.type]||r.type}</td><td style="font-size:11px;color:var(--text2);">${(r.channels||[]).join(', ')}</td><td class="${parseFloat(r.pct)>=0?'pct-pos':'pct-neg'}">${parseFloat(r.pct)>=0?'+':''}${r.pct}%</td><td style="font-size:11px;color:var(--text2);">stay ${r.op==='gte'?'≥':'≤'} ${r.nights} nights</td><td><button class="tbl-link" onclick="deleteRule(${i})">Delete</button></td></tr>`).join('');
+}
+function openAddRuleModal(){document.getElementById('addRuleModal').classList.add('open');}
+function addPriceRule(){
+  const name=document.getElementById('rule-name').value,pct=document.getElementById('rule-pct').value,nights=document.getElementById('rule-cond-nights').value;
+  if(!name||!pct||!nights){toast('Fill in all fields','error');return;}
+  const channels=Array.from(document.querySelectorAll('#addRuleModal input[type=checkbox]:checked')).map(c=>c.value);
+  priceRules.push({name,type:document.getElementById('rule-type').value,pct,op:document.getElementById('rule-cond-op').value,nights,channels});
+  renderPriceRules();closeModal('addRuleModal');toast('Rule added — save to persist','info');
+}
+function deleteRule(i){if(!confirm('Delete this rule?'))return;priceRules.splice(i,1);renderPriceRules();}
+
+// ── FEES ───────────────────────────────────
+function populateFeesData(d){fees=d.fees||[];renderFeesTable();if(d.cancel_policy)document.getElementById('fees-cancel-policy').value=d.cancel_policy;if(d.cancel_notes)document.getElementById('fees-cancel-notes').value=d.cancel_notes;if(d.rental_conditions)document.getElementById('fees-rental-conditions').value=d.rental_conditions;}
+function collectFeesPolicies(){return{fees,cancel_policy:document.getElementById('fees-cancel-policy')?.value,cancel_notes:document.getElementById('fees-cancel-notes')?.value,rental_conditions:document.getElementById('fees-rental-conditions')?.value};}
+function renderFeesTable(){const tbody=document.getElementById('fees-tbody');if(!fees.length){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:24px;">No fees defined.</td></tr>';return;}tbody.innerHTML=fees.map((f,i)=>`<tr><td>${f.name}</td><td>${f.type}</td><td>$${f.value}</td><td>${f.tax}%</td><td style="font-size:11px;color:var(--text2);">${f.scope}</td><td style="font-size:11px;color:var(--text2);">${(f.channels||[]).join(', ')}</td><td style="font-size:11px;color:var(--text2);">${f.applies==='all'?'All properties':'This property'}</td><td><button class="tbl-link" onclick="deleteFee(${i})" style="color:var(--red);">Delete</button></td></tr>`).join('');}
+function openAddFeeModal(){document.getElementById('addFeeModal').classList.add('open');}
+function addFee(){const name=document.getElementById('fee-name').value;if(!name){toast('Enter a fee name','error');return;}fees.push({name,type:document.getElementById('fee-type').value,value:document.getElementById('fee-value').value,tax:document.getElementById('fee-tax').value||0,scope:document.getElementById('fee-scope').value,channels:Array.from(document.querySelectorAll('#addFeeModal input[type=checkbox]:checked')).map(c=>c.value),applies:document.getElementById('fee-applies').value});renderFeesTable();closeModal('addFeeModal');toast('Fee added — save to persist','info');}
+function deleteFee(i){if(!confirm('Delete fee?'))return;fees.splice(i,1);renderFeesTable();}
+function addListItem(listId,placeholder){const list=document.getElementById(listId);const empty=list.querySelector('[style*="text-align:center"]');if(empty)empty.remove();const el=document.createElement('div');el.style.cssText='display:flex;gap:8px;margin-bottom:8px;';el.innerHTML='<input type="text" placeholder="'+placeholder+'" style="flex:1;"><button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:18px;padding:0 4px;">×</button>';list.appendChild(el);}
+
+// ── AMENITIES ──────────────────────────────
+function buildAmenitiesUI(){
+  const container=document.getElementById('amenities-container');
+  container.innerHTML=AMENITY_GROUPS.map(g=>`<div class="section-card"><div class="section-hdr" onclick="toggleSection(this)"><div class="section-hdr-label">${g.group}</div><span class="section-chevron">▾</span></div><div class="section-body"><div class="amenity-grid">${g.items.map(item=>`<label class="amenity-item"><input type="checkbox" id="am-${item.key}" value="${item.key}"> ${item.label}</label>`).join('')}</div></div></div>`).join('');
+}
+function populateAmenities(a){Object.keys(a).forEach(key=>{const el=document.getElementById('am-'+key);if(el)el.checked=!!a[key];});}
+function collectAmenities(){const result={};document.querySelectorAll('#amenities-container input[type=checkbox]').forEach(el=>{result[el.value]=el.checked;});return result;}
+
+// ── PHOTOS ─────────────────────────────────
+function renderPhotos(){
+  const grid=document.getElementById('photo-grid');
+  if(!photos.length){grid.innerHTML='<div class="empty-state"><div style="font-size:32px;margin-bottom:10px;">📷</div><div>No photos yet.</div></div>';return;}
+  grid.innerHTML=photos.map((p,i)=>`<div class="photo-card">${i===0?'<span class="photo-cover-badge">Cover</span>':''}<img src="${p.url}" alt="${p.caption||''}"><div class="photo-actions">${i>0?'<button class="photo-btn" onclick="setAsCover('+i+')" title="Set as cover">⭐</button>':''}<button class="photo-btn" onclick="deletePhoto('+i+')" title="Delete">✕</button></div><div class="photo-card-body"><input type="text" value="${p.caption||''}" placeholder="Caption" onchange="updateCaption(${i},this.value)"></div></div>`).join('');
+}
+async function handlePhotoUpload(input){
+  const files=Array.from(input.files);if(!files.length)return;
+  toast('Uploading '+files.length+' photo(s)…','info');
+  for(const file of files){try{const ext=file.name.split('.').pop();const path=(currentApt||'general')+'/'+Date.now()+'.'+ext;const{data,error}=await sb.storage.from('property-photos').upload(path,file,{upsert:true});if(error)throw error;const{data:urlData}=sb.storage.from('property-photos').getPublicUrl(path);photos.push({url:urlData.publicUrl,caption:'',path});}catch(e){toast('Upload failed: '+e.message,'error');}}
+  renderPhotos();await savePhotosToDB();input.value='';
+}
+function setAsCover(idx){const p=photos.splice(idx,1)[0];photos.unshift(p);renderPhotos();toast('Cover updated — save to persist','info');}
+async function deletePhoto(idx){if(!confirm('Delete this photo?'))return;const p=photos[idx];if(p.path)await sb.storage.from('property-photos').remove([p.path]);photos.splice(idx,1);renderPhotos();await savePhotosToDB();}
+function updateCaption(idx,val){photos[idx].caption=val;}
+async function savePhotosToDB(){if(!currentApt)return;await upsertSettings({photos});}
+
+// ── SERVICE PROVIDERS ──────────────────────
+function populateServiceProviders(d){if(d.notes)document.getElementById('sp-notes').value=d.notes;}
+function toggleAllSP(cb){document.querySelectorAll('.sp-toggle').forEach(t=>t.checked=cb.checked);}
+function collectServiceProviders(){const providers=[];document.querySelectorAll('#sp-tbody tr').forEach((row)=>{const toggle=row.querySelector('.sp-toggle');const cells=row.querySelectorAll('td');if(toggle&&cells.length>=3)providers.push({name:cells[0].textContent.trim(),enabled:toggle.checked});});return{providers,notes:document.getElementById('sp-notes')?.value};}
+
+// ── OWNER ──────────────────────────────────
+function populateOwner(d){if(d.notes)document.getElementById('owner-notes').value=d.notes;}
+function collectOwner(){return{collect_tax:document.querySelector('input[name="owner-tax"]:checked')?.value,cc_owner:document.querySelector('input[name="owner-cc"]:checked')?.value,notes:document.getElementById('owner-notes')?.value};}
+
+// ── SAVE ───────────────────────────────────
+async function saveCurrentTab(){saveTab(currentTab);}
+async function saveTab(tab){
+  if(!currentApt){toast('No property selected. Open from the Properties tab.','error');return;}
+  let payload={};
+  if(tab==='main-settings')payload={main_settings:collectMainSettings()};
+  else if(tab==='descriptions')payload={descriptions:collectDescriptions()};
+  else if(tab==='pricing')payload={pricing:collectPricing()};
+  else if(tab==='amenities')payload={amenities:collectAmenities()};
+  else if(tab==='photos'){await savePhotosToDB();return;}
+  else if(tab==='fees-policies')payload={fees_policies:collectFeesPolicies()};
+  else if(tab==='service-providers')payload={service_providers:collectServiceProviders()};
+  else if(tab==='owner')payload={owner_info:collectOwner()};
+  else if(tab==='reviews'){toast('Reviews are read-only from Hostfully','info');return;}
+  try{await upsertSettings(payload);toast(capitalize(tab)+' saved ✓','success');setSaveStatus('Saved '+new Date().toLocaleTimeString());}
+  catch(e){toast('Save failed: '+e.message,'error');}
+}
+async function upsertSettings(payload){const{error}=await sb.from('property_settings').upsert({apt:currentApt,property_uid:currentUid,...payload,updated_at:new Date().toISOString()},{onConflict:'apt'});if(error)throw error;}
+
+// ── BULK APPLY ─────────────────────────────
+function openBulkModal(tab){bulkTargetTab=tab;document.getElementById('bulk-section-label').textContent=capitalize(tab)+' settings';document.getElementById('bulkModal').classList.add('open');renderAptSelectList();}
+function closeBulkModal(){document.getElementById('bulkModal').classList.remove('open');}
+function renderAptSelectList(){
+  const list=document.getElementById('apt-select-list');
+  if(!allApts.length){list.innerHTML='<div style="color:var(--text3);font-size:12px;padding:16px;text-align:center;">No units found. Make sure the units table exists in Supabase.</div>';return;}
+  list.innerHTML=allApts.map(a=>`<label class="apt-select-item ${a.apt===currentApt?'selected':''}"><input type="checkbox" value="${a.apt}" ${a.apt===currentApt?'checked':''}><span><strong>${a.apt}</strong><br><span style="font-size:10px;color:var(--text3)">${a.name||'Vacant'}</span></span></label>`).join('');
+}
+function selectAllApts(){document.querySelectorAll('#apt-select-list input[type=checkbox]').forEach(cb=>cb.checked=true);document.querySelectorAll('#apt-select-list .apt-select-item').forEach(el=>el.classList.add('selected'));}
+async function confirmBulkApply(){
+  const selected=Array.from(document.querySelectorAll('#apt-select-list input:checked')).map(c=>c.value);
+  if(!selected.length){toast('Select at least one unit','error');return;}
+  let payload={};
+  if(bulkTargetTab==='descriptions')payload={descriptions:collectDescriptions()};
+  else if(bulkTargetTab==='pricing')payload={pricing:collectPricing()};
+  else if(bulkTargetTab==='amenities')payload={amenities:collectAmenities()};
+  else if(bulkTargetTab==='main-settings')payload={main_settings:collectMainSettings()};
+  else if(bulkTargetTab==='fees-policies')payload={fees_policies:collectFeesPolicies()};
+  closeBulkModal();toast('Applying to '+selected.length+' unit(s)…','info');
+  let ok=0,fail=0;
+  for(const apt of selected){try{const{error}=await sb.from('property_settings').upsert({apt,...payload,updated_at:new Date().toISOString()},{onConflict:'apt'});if(error)throw error;ok++;}catch(e){fail++;}}
+  toast('Applied to '+ok+' unit(s)'+(fail?' · '+fail+' failed':''),ok?'success':'error');
+}
+
+// ── HELPERS ────────────────────────────────
+function toggleSection(hdr){const body=hdr.nextElementSibling;const chevron=hdr.querySelector('.section-chevron');body.classList.toggle('collapsed');chevron?.classList.toggle('collapsed');}
+function updateCharCount(el,countId){const counter=document.getElementById(countId);if(counter)counter.textContent=el.value.length;}
+function setSaveStatus(msg){const el=document.getElementById('save-status');if(el)el.textContent=msg;}
+function capitalize(s){return s.charAt(0).toUpperCase()+s.slice(1).replace(/-/g,' ');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function toast(msg,type='info'){
+  const wrap=document.getElementById('toastWrap'
