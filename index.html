@@ -3429,20 +3429,28 @@ async function runBackup() {
     }
 
     // ── Also download a local .sql file ──
-    const sqlLines = [
-      `-- Willow PropDesk Full Backup — ${new Date().toLocaleString()}`,
-      `-- units: ${unitsRows.length} | properties: ${(propertiesRows||[]).length} | property_settings: ${(settingsRows||[]).length}`,
+    function rowToSQL(table, conflictCol, r) {
+      const cols = Object.keys(r).join(',');
+      const vals = Object.values(r).map(function(v) {
+        if (v === null) return 'NULL';
+        if (typeof v === 'object') return "'" + JSON.stringify(v).replace(/'/g, "''") + "'";
+        return "'" + String(v).replace(/'/g, "''") + "'";
+      }).join(',');
+      return 'INSERT INTO ' + table + ' (' + cols + ') VALUES (' + vals + ') ON CONFLICT (' + conflictCol + ') DO NOTHING;';
+    }
+    const sqlParts = [
+      '-- Willow PropDesk Full Backup -- ' + new Date().toLocaleString(),
+      '-- units: ' + unitsRows.length + ' | properties: ' + (propertiesRows||[]).length + ' | property_settings: ' + (settingsRows||[]).length,
       '',
       '-- UNITS',
-      ...unitsRows.map(r => `INSERT INTO units (${Object.keys(r).join(',')}) VALUES (${Object.values(r).map(v=>v===null?'NULL':typeof v==='object'?`'${JSON.stringify(v).replace(/'/g,"''")}'`:`'${String(v).replace(/'/g,"''")}'`).join(',')}) ON CONFLICT (id) DO NOTHING;`),
-      '',
-      '-- PROPERTIES',
-      ...(propertiesRows||[]).map(r => `INSERT INTO properties (${Object.keys(r).join(',')}) VALUES (${Object.values(r).map(v=>v===null?'NULL':typeof v==='object'?`'${JSON.stringify(v).replace(/'/g,"''")}'`:`'${String(v).replace(/'/g,"''")}'`).join(',')}) ON CONFLICT (apt) DO NOTHING;`),
-      '',
-      '-- PROPERTY_SETTINGS',
-      ...(settingsRows||[]).map(r => `INSERT INTO property_settings (${Object.keys(r).join(',')}) VALUES (${Object.values(r).map(v=>v===null?'NULL':typeof v==='object'?`'${JSON.stringify(v).replace(/'/g,"''")}'`:`'${String(v).replace(/'/g,"''")}'`).join(',')}) ON CONFLICT (apt) DO NOTHING;`)
-    ];
-    const blob = new Blob([sqlLines.join('\n')], {type:'text/plain'});
+    ].concat(
+      unitsRows.map(function(r){ return rowToSQL('units','id',r); }),
+      ['','-- PROPERTIES'],
+      (propertiesRows||[]).map(function(r){ return rowToSQL('properties','apt',r); }),
+      ['','-- PROPERTY_SETTINGS'],
+      (settingsRows||[]).map(function(r){ return rowToSQL('property_settings','apt',r); })
+    );
+    const blob = new Blob([sqlParts.join('\n')], {type:'text/plain'});
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = `willow-backup-${new Date().toISOString().slice(0,10)}.sql`;
