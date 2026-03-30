@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chelbourne — Property Manager | v2026-03-29 16:30</title>
+<title>Willow — Property Manager | v2026-03-30 00:00</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http%3A//www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%238a5f32'/%3E%3Crect x='10' y='22' width='44' height='36' fill='%23f4ede2'/%3E%3Crect x='8' y='18' width='48' height='6' rx='1' fill='%23c49a6c'/%3E%3Crect x='18' y='10' width='28' height='10' fill='%23e8dcc8'/%3E%3Crect x='16' y='8' width='32' height='4' rx='1' fill='%23c49a6c'/%3E%3Cline x1='10' y1='34' x2='54' y2='34' stroke='%23c49a6c' stroke-width='1'/%3E%3Cline x1='10' y1='44' x2='54' y2='44' stroke='%23c49a6c' stroke-width='1'/%3E%3Crect x='14' y='25' width='7' height='6' rx='1' fill='%235b8fc9'/%3E%3Crect x='25' y='25' width='7' height='6' rx='1' fill='%235b8fc9'/%3E%3Crect x='36' y='25' width='7' height='6' rx='1' fill='%23f0d080'/%3E%3Crect x='47' y='25' width='7' height='6' rx='1' fill='%235b8fc9'/%3E%3Crect x='14' y='36' width='7' height='6' rx='1' fill='%23f0d080'/%3E%3Crect x='25' y='36' width='7' height='6' rx='1' fill='%235b8fc9'/%3E%3Crect x='36' y='36' width='7' height='6' rx='1' fill='%235b8fc9'/%3E%3Crect x='47' y='36' width='7' height='6' rx='1' fill='%23f0d080'/%3E%3Crect x='22' y='12' width='6' height='4' rx='1' fill='%235b8fc9'/%3E%3Crect x='36' y='12' width='6' height='4' rx='1' fill='%23f0d080'/%3E%3Crect x='27' y='46' width='10' height='12' rx='1' fill='%238a5f32'/%3E%3Ccircle cx='35' cy='52' r='1' fill='%23f4ede2'/%3E%3Crect x='0' y='57' width='64' height='7' fill='%236b4e2a'/%3E%3Crect x='24' y='55' width='16' height='3' fill='%23a07840'/%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
@@ -47,7 +47,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 #syncStatus{color:var(--text3) !important;font-size:11px;}
 
 /* ── Nav ── */
-.nav-tabs{background:var(--surface);border-bottom:1px solid var(--border);display:flex;padding:0 32px;gap:0;box-shadow:var(--shadow);flex-shrink:0;}
+.nav-tabs{background:var(--surface);border-bottom:1px solid var(--border);display:flex;padding:0 32px;gap:0;box-shadow:var(--shadow);flex-shrink:0;overflow-x:auto;}
 .nav-tab{padding:14px 22px;font-size:11px;font-weight:500;letter-spacing:.5px;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;white-space:nowrap;}
 .nav-tab:hover{color:var(--text2);background:var(--surface2);}
 .nav-tab.active{color:var(--accent2);border-bottom-color:var(--accent);background:var(--accent-bg);}
@@ -74,7 +74,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 .pill:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-bg);transform:translateY(-1px);}
 .pill.active{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(181,120,74,.35);}
 .spacer{flex:1;min-width:0;}
-select.sort-sel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);outline:none;cursor:pointer;width:auto;flex-shrink:0;box-shadow:var(--shadow);}
+select.sort-sel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);outline:none;cursor:pointer;width:auto;flex-shrink:0;box-shadow:var(--shadow);overflow-x:auto;}
 
 /* ── Buttons ── */
 .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius);border:none;cursor:pointer;font-family:'DM Mono',monospace;font-size:12px;font-weight:500;transition:all .18s;white-space:nowrap;}
@@ -123,7 +123,7 @@ td{padding:13px 14px;vertical-align:middle;}
 
 /* ── Action buttons ── */
 .actions-cell{display:flex;gap:5px;}
-.icon-btn{width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text3);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s;flex-shrink:0;box-shadow:var(--shadow);}
+.icon-btn{width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text3);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s;flex-shrink:0;box-shadow:var(--shadow);overflow-x:auto;}
 .icon-btn:hover{background:var(--surface3);color:var(--text);border-color:var(--border2);transform:translateY(-1px);box-shadow:var(--shadow-md);}
 .icon-btn.ib-pay:hover{background:var(--green-bg);color:var(--green);border-color:var(--green);}
 .icon-btn.ib-edit:hover{background:var(--blue-bg);color:var(--blue);border-color:var(--blue);}
@@ -374,21 +374,27 @@ textarea{resize:vertical;min-height:72px;}
 
 /* ═══ PROPERTIES PAGE CSS ═══ */
 .prop-wrap{padding:0 0 40px;}
-.prop-header{
-  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
-  padding:20px 32px 16px;background:var(--surface);border-bottom:1px solid var(--border);
-  position:sticky;top:0;z-index:100;box-shadow:var(--shadow);
+/* Properties page — sidebar layout */
+.prop-wrap{display:flex;min-height:calc(100vh - var(--header-h) - 48px);}
+.prop-sidebar{
+  width:220px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);
+  padding:16px 12px;display:flex;flex-direction:column;gap:8px;
+  position:sticky;top:48px;height:calc(100vh - var(--header-h) - 48px);overflow-y:auto;
 }
-.prop-title-block{display:flex;align-items:baseline;gap:12px;}
-.prop-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--accent2);}
-.prop-count{font-family:'DM Mono',monospace;font-size:12px;color:var(--text3);background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:2px 10px;}
-.prop-header-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.prop-search-wrap{position:relative;min-width:200px;}
+.prop-sidebar-section{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);padding:4px 4px 2px;margin-top:4px;}
+.prop-search-wrap{position:relative;width:100%;}
 .prop-search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none;}
-.prop-search-wrap input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px 8px 32px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text);outline:none;transition:all .2s;box-shadow:var(--shadow);}
+.prop-search-wrap input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 10px 8px 32px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text);outline:none;transition:all .2s;box-shadow:var(--shadow);box-sizing:border-box;}
 .prop-search-wrap input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(181,120,74,.12);}
-.prop-filter-sel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:7px 10px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);outline:none;cursor:pointer;box-shadow:var(--shadow);}
-.prop-showing{padding:10px 32px;font-size:11px;color:var(--text3);background:var(--bg);border-bottom:1px solid var(--border);text-align:right;}
+.prop-filter-sel{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 10px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text2);outline:none;cursor:pointer;box-shadow:var(--shadow);}
+.prop-filter-sel:focus{border-color:var(--accent);}
+.prop-sidebar-btns{display:flex;flex-direction:column;gap:6px;margin-top:4px;}
+.prop-main{flex:1;min-width:0;padding:0;}
+.prop-count{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);padding:8px 20px;border-bottom:1px solid var(--border);text-align:right;background:var(--bg);}
+.prop-showing{padding:8px 20px;font-size:11px;color:var(--text3);background:var(--bg);border-bottom:1px solid var(--border);text-align:right;}
+.prop-list{padding:12px 16px;display:flex;flex-direction:column;gap:0;}
+/* hide old header */
+.prop-header{display:none;}
 .prop-list{padding:0 32px;margin-top:8px;display:flex;flex-direction:column;gap:0;}
 
 /* Property row — matches Hostfully layout */
@@ -438,9 +444,11 @@ textarea{resize:vertical;min-height:72px;}
 .prop-empty{text-align:center;padding:60px 20px;color:var(--text3);}
 
 @media(max-width:768px){
-  .prop-header{padding:14px 16px;}
+  .prop-sidebar{width:100%;height:auto;position:relative;top:0;flex-direction:row;flex-wrap:wrap;border-right:none;border-bottom:1px solid var(--border);}
+  .prop-wrap{flex-direction:column;}
   .prop-list{padding:0 12px;}
   .prop-showing{padding:8px 16px;}
+  .prop-list{padding:8px 12px;}
   .prop-mid{display:none;}
 }
 
@@ -490,7 +498,7 @@ textarea{resize:vertical;min-height:72px;}
 <!-- ═══ LOGIN ═══ -->
 <div id="authScreen">
   <div id="authCard">
-    <div id="authLogo"><h1>Chelbourne</h1><p>Property Manager</p></div>
+    <div id="authLogo"><h1>Willow</h1><p>Property Manager</p></div>
     <div id="authTabs">
       <div class="auth-tab active" id="tabAdmin" onclick="authSelectRole('admin')">Admin</div>
       <div class="auth-tab" id="tabUser" onclick="authSelectRole('user')">User</div>
@@ -531,11 +539,11 @@ textarea{resize:vertical;min-height:72px;}
 
 <div class="loading-overlay" id="loadingOverlay">
   <div class="spinner"></div>
-  <h2>Chelbourne</h2>
+  <h2>Willow</h2>
   <p>Connecting to database…</p>
 </div>
 <header class="header">
-  <div class="brand"><h1>Chelbourne</h1><span class="brand-sub">Property Manager</span></div>
+  <div class="brand"><h1>Willow</h1><span class="brand-sub">Property Manager</span></div>
   <div class="header-right">
     <span id="syncStatus" style="font-size:11px;color:var(--text3)">● live<span class="sync-dot"></span></span>
     <span id="headerClock" style="font-size:13px;color:var(--accent2);font-family:'DM Mono',monospace;font-weight:700;min-width:220px;display:inline-block;"></span>
@@ -546,7 +554,7 @@ textarea{resize:vertical;min-height:72px;}
     <button class="btn btn-secondary btn-sm" onclick="exportCSV()">⬇ Export</button>
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
       <button class="btn btn-primary" onclick="openAddModal()">＋ Add Unit</button>
-      <span style="font-size:9px;color:var(--text3);white-space:nowrap;letter-spacing:.3px;">updated Mar 29 2026, 11:00</span>
+      <span id="buildStamp" style="font-size:9px;color:var(--text3);white-space:nowrap;letter-spacing:.3px;"></span>
     </div>
   </div>
 </header>
@@ -3061,6 +3069,16 @@ function toast(msg,type=''){const t=document.createElement('div');t.className='t
 function exportCSV(){const h=['Apt','Owner','Tenant','Type','Rent','Balance','Due Date','Note'];const rows=data.filter(r=>!r.archived).map(r=>[r.apt,r.owner,r.name,r.type,r.rent,r.balance,r.due,`"${(r.note||'').replace(/"/g,'""')}"`]);const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent([h,...rows].map(r=>r.join(',')).join('\n'));a.download='propdesk-export.csv';a.click();toast('CSV exported ✓','success');}
 
 // ── PAGE NAV ───────────────────────────────────────
+// Auto-open tab from sessionStorage (e.g. coming back from property-settings)
+window.addEventListener('DOMContentLoaded', function(){
+  const openTab = sessionStorage.getItem('openTab');
+  if(openTab){
+    sessionStorage.removeItem('openTab');
+    const tab = document.querySelector(`.nav-tab[onclick*="'${openTab}'"]`);
+    if(tab) setTimeout(()=>tab.click(), 800);
+  }
+});
+
 function showPage(p,el){
   document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(x=>x.classList.remove('active'));
@@ -3087,7 +3105,20 @@ async function loadProperties() {
       .select('*')
       .order('name', { ascending: true });
     if (error) throw error;
-    propertiesData = rows || [];
+
+    // Also load public names from property_settings descriptions
+    const { data: settings } = await sb
+      .from('property_settings')
+      .select('apt, descriptions');
+    const settingsMap = {};
+    (settings||[]).forEach(s => {
+      if(s.descriptions?.name) settingsMap[s.apt] = s.descriptions.name;
+    });
+
+    propertiesData = (rows || []).map(p => ({
+      ...p,
+      public_name: settingsMap[p.apt] || null
+    }));
   } catch(e) {
     console.warn('properties table not found, using units data as fallback', e);
     // Fallback: derive property list from the units table (active, unique apts)
@@ -3108,6 +3139,11 @@ async function loadProperties() {
         tags: []
       }));
   }
+  // Enrich with unit type from units data
+  propertiesData = propertiesData.map(p => {
+    const linkedUnit = data.find(u => !u.archived && u.apt === p.internal_apt);
+    return { ...p, unit_type: linkedUnit ? linkedUnit.type : null };
+  });
   populatePropOwnerFilter();
 }
 
@@ -3121,9 +3157,10 @@ function populatePropOwnerFilter() {
 }
 
 function filterProperties() {
-  const search = (document.getElementById('propSearch')?.value || '').toLowerCase();
-  const status = document.getElementById('propStatusFilter')?.value || '';
-  const owner  = document.getElementById('propOwnerFilter')?.value || '';
+  const search  = (document.getElementById('propSearch')?.value || '').toLowerCase();
+  const status  = document.getElementById('propStatusFilter')?.value || '';
+  const owner   = document.getElementById('propOwnerFilter')?.value || '';
+  const typeFilter = document.getElementById('propTypeFilter')?.value || '';
 
   const filtered = propertiesData.filter(p => {
     const matchSearch = !search ||
@@ -3133,7 +3170,22 @@ function filterProperties() {
       (p.hostfully_uid||'').toLowerCase().includes(search);
     const matchStatus = !status || p.status === status;
     const matchOwner  = !owner  || p.owner === owner;
-    return matchSearch && matchStatus && matchOwner;
+
+    // Type filter: match against units table type via internal_apt
+    let matchType = true;
+    if (typeFilter === 'short-stay') {
+      // Only show properties that have a hostfully_uid (short-stay) OR are linked to a short-stay unit
+      const linkedUnit = data.find(u => !u.archived && u.apt === p.internal_apt);
+      matchType = p.hostfully_uid || (linkedUnit && linkedUnit.type === 'short-stay');
+    } else if (typeFilter === 'long-term') {
+      const linkedUnit = data.find(u => !u.archived && u.apt === p.internal_apt);
+      matchType = linkedUnit && linkedUnit.type === 'long-term';
+    } else if (typeFilter === 'month-to-month') {
+      const linkedUnit = data.find(u => !u.archived && u.apt === p.internal_apt);
+      matchType = linkedUnit && linkedUnit.type === 'month-to-month';
+    }
+
+    return matchSearch && matchStatus && matchOwner && matchType;
   });
 
   renderPropertyList(filtered);
@@ -3169,17 +3221,22 @@ function renderPropertyList(props) {
     const baths = p.bathrooms != null ? p.bathrooms + ' bathroom' + (p.bathrooms !== 1 ? 's' : '') : null;
     const guests= p.max_guests!= null ? p.max_guests + ' guest'   + (p.max_guests !== 1 ? 's' : '') : null;
     const metaParts = [guests, beds, baths].filter(Boolean);
+    const publicName = p.public_name || null;
     const thumbHtml = p.photo_url
-      ? `<img src="${p.photo_url}" alt="${p.name}" loading="lazy">`
+      ? `<img src="${p.photo_url}" alt="${p.name}" loading="lazy" onerror="this.style.display='none';this.parentNode.innerHTML='<span class=\"prop-thumb-icon\">🏠</span>'">`
       : `<span class="prop-thumb-icon">🏠</span>`;
-    const addrLine = [p.address, p.city].filter(Boolean).join(', ');
-    const settingsHref = `property-settings.html?apt=${encodeURIComponent(p.apt || p.name)}`;
+    const rawAddr = typeof p.address === 'object' && p.address
+      ? (p.address.street || p.address.address1 || p.address.line1 || '')
+      : (p.address || '');
+    const addrLine = [rawAddr, p.city, p.state].filter(Boolean).join(', ');
+    const settingsHref = p.property_uid ? `property-settings.html?uid=${p.property_uid}` : `property-settings.html?apt=${encodeURIComponent(p.apt || p.name)}`;
 
     return `<div class="prop-row" onclick="window.location='${settingsHref}'">
       <div class="prop-thumb">${thumbHtml}</div>
       <div class="prop-info">
         <div class="prop-name">${p.name || p.apt || '—'}</div>
-        ${addrLine ? `<div class="prop-address">${addrLine}</div>` : ''}
+        ${publicName ? `<div style="font-size:12px;color:var(--accent2);font-weight:500;margin-bottom:3px;">${publicName}</div>` : `${addrLine ? `<div class="prop-address">${addrLine}</div>` : ''}`}
+        ${publicName && addrLine ? `<div class="prop-address">${addrLine}</div>` : ''}
         ${metaParts.length ? `<div class="prop-meta">${metaParts.map(m=>`<span class="prop-meta-item">⬩ ${m}</span>`).join('')}</div>` : ''}
         <div class="prop-tags">
           ${(p.tags||[]).map(t=>`<span class="prop-tag">${t}</span>`).join('')}
@@ -3319,28 +3376,51 @@ async function runBackup() {
   btns.forEach(b => { if(b){ b.innerHTML='⏳ Backing up…'; b.disabled=true; b.style.opacity='0.7'; } });
 
   try {
-    // Fetch ALL records from Supabase
-    let allRows = [];
+    // ── Fetch ALL tables ──
+    // 1. units (paginated)
+    let unitsRows = [];
     const pageSize = 500;
     let page = 0;
     while(true) {
       const from = page * pageSize, to = from + pageSize - 1;
       const {data:rows, error} = await sb.from('units').select('*').order('id').range(from, to);
-      if(error) throw new Error(error.message);
+      if(error) throw new Error('units: ' + error.message);
       if(!rows || rows.length === 0) break;
-      allRows = allRows.concat(rows);
+      unitsRows = unitsRows.concat(rows);
       if(rows.length < pageSize) break;
       page++;
     }
 
+    // 2. properties
+    const {data:propertiesRows, error:pErr} = await sb.from('properties').select('*').order('property_uid');
+    if(pErr) console.warn('properties backup skipped:', pErr.message);
+
+    // 3. property_settings
+    const {data:settingsRows, error:sErr} = await sb.from('property_settings').select('*').order('apt');
+    if(sErr) console.warn('property_settings backup skipped:', sErr.message);
+
+    // 4. audit_log (last 500)
+    const {data:auditRows, error:aErr} = await sb.from('audit_log').select('*').order('created_at', {ascending:false}).limit(500);
+    if(aErr) console.warn('audit_log backup skipped:', aErr.message);
+
+    const snapshot = {
+      backed_up_at: new Date().toISOString(),
+      units:             unitsRows,
+      properties:        propertiesRows || [],
+      property_settings: settingsRows  || [],
+      audit_log:         auditRows     || []
+    };
+
+    const totalRecords = unitsRows.length + (propertiesRows||[]).length + (settingsRows||[]).length;
+
     // ── Save snapshot to Supabase backups table ──
     const { error: bErr } = await sb.from('backups').insert({
-      record_count: allRows.length,
-      snapshot: allRows
+      record_count: totalRecords,
+      snapshot: snapshot
     });
     if (bErr) throw new Error('Supabase save failed: ' + bErr.message);
 
-    // ── Enforce 10-backup cap: delete oldest if over limit ──
+    // ── Enforce 10-backup cap ──
     const { data: allBackups, error: listErr } = await sb
       .from('backups').select('id').order('created_at', { ascending: true });
     if (!listErr && allBackups && allBackups.length > 10) {
@@ -3348,10 +3428,29 @@ async function runBackup() {
       await sb.from('backups').delete().in('id', toDelete);
     }
 
-    // ── Save timestamp to localStorage as well ──
+    // ── Also download a local .sql file ──
+    const sqlLines = [
+      `-- Willow PropDesk Full Backup — ${new Date().toLocaleString()}`,
+      `-- units: ${unitsRows.length} | properties: ${(propertiesRows||[]).length} | property_settings: ${(settingsRows||[]).length}`,
+      '',
+      '-- UNITS',
+      ...unitsRows.map(r => `INSERT INTO units (${Object.keys(r).join(',')}) VALUES (${Object.values(r).map(v=>v===null?'NULL':typeof v==='object'?`'${JSON.stringify(v).replace(/'/g,"''")}'`:`'${String(v).replace(/'/g,"''")}'`).join(',')}) ON CONFLICT (id) DO NOTHING;`),
+      '',
+      '-- PROPERTIES',
+      ...(propertiesRows||[]).map(r => `INSERT INTO properties (${Object.keys(r).join(',')}) VALUES (${Object.values(r).map(v=>v===null?'NULL':typeof v==='object'?`'${JSON.stringify(v).replace(/'/g,"''")}'`:`'${String(v).replace(/'/g,"''")}'`).join(',')}) ON CONFLICT (apt) DO NOTHING;`),
+      '',
+      '-- PROPERTY_SETTINGS',
+      ...(settingsRows||[]).map(r => `INSERT INTO property_settings (${Object.keys(r).join(',')}) VALUES (${Object.values(r).map(v=>v===null?'NULL':typeof v==='object'?`'${JSON.stringify(v).replace(/'/g,"''")}'`:`'${String(v).replace(/'/g,"''")}'`).join(',')}) ON CONFLICT (apt) DO NOTHING;`)
+    ];
+    const blob = new Blob([sqlLines.join('\n')], {type:'text/plain'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `willow-backup-${new Date().toISOString().slice(0,10)}.sql`;
+    a.click();
+
     localStorage.setItem(BACKUP_KEY, Date.now().toString());
     await checkBackupStatus();
-    toast(`✓ Backup saved to Supabase — ${allRows.length} records`, 'success');
+    toast(`✓ Backup complete — ${unitsRows.length} units, ${(propertiesRows||[]).length} properties, ${(settingsRows||[]).length} settings`, 'success');
 
   } catch(e) {
     console.error('Backup failed:', e);
@@ -5447,6 +5546,10 @@ async function boot() {
     // if (archived.length === 0 && ARCHIVED_SEED.length > 0) { ... }
 
     overlay.style.display = 'none';
+    // Set build stamp dynamically from title
+    const titleMatch = document.title.match(/v(\d{4}-\d{2}-\d{2} \d{2}:\d{2})/);
+    const stamp = document.getElementById('buildStamp');
+    if (stamp && titleMatch) stamp.textContent = 'updated ' + titleMatch[1].replace('-','').replace('-','').replace(' ',', ').replace(/^(\d{4})(\d{2})(\d{2})/, (_,y,m,d)=>{ const mn=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; return mn[parseInt(m)-1]+' '+parseInt(d)+' '+y; });
     renderTable();
     initCalScroll();
     subscribeRealtime();
@@ -5722,36 +5825,46 @@ setInterval(updateHeaderClock, 1000);
 <!-- ═══ PROPERTIES PAGE ═══ -->
 <div class="page" id="page-properties">
   <div class="prop-wrap">
-    <div class="prop-header">
-      <div class="prop-title-block">
-        <h2 class="prop-title">Willow Partnership, LLC Properties</h2>
+    <div class="prop-sidebar">
+      <div class="prop-search-wrap">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" id="propSearch" placeholder="Property name or UID…" oninput="filterProperties()">
+      </div>
+      <div class="prop-sidebar-section">Type</div>
+      <select id="propTypeFilter" onchange="filterProperties()" class="prop-filter-sel">
+        <option value="short-stay">Short Stay</option>
+        <option value="">All Units</option>
+        <option value="long-term">Long Term</option>
+        <option value="month-to-month">Month-to-Month</option>
+      </select>
+      <div class="prop-sidebar-section">Status</div>
+      <select id="propStatusFilter" onchange="filterProperties()" class="prop-filter-sel">
+        <option value="Active">Active</option>
+        <option value="">All Statuses</option>
+        <option value="Inactive">Inactive</option>
+      </select>
+      <div class="prop-sidebar-section">Owner</div>
+      <select id="propOwnerFilter" onchange="filterProperties()" class="prop-filter-sel">
+        <option value="">All Owners</option>
+      </select>
+      <div class="prop-sidebar-btns">
+        <button class="btn btn-primary btn-sm" style="justify-content:center;" onclick="openAddPropertyModal()">＋ Add Property</button>
+        <button class="btn btn-secondary btn-sm" style="justify-content:center;" onclick="syncPropertiesFromHostfully()">🔄 Sync</button>
+      </div>
+      <div style="margin-top:auto;padding-top:12px;">
         <span class="prop-count" id="propCountBadge"></span>
       </div>
-      <div class="prop-header-right">
-        <div class="prop-search-wrap">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          <input type="text" id="propSearch" placeholder="Property name or UID…" oninput="filterProperties()">
-        </div>
-        <select id="propStatusFilter" onchange="filterProperties()" class="prop-filter-sel">
-          <option value="">All Statuses</option>
-          <option value="Active">Active</option>
-          <option value="Inactive">Inactive</option>
-        </select>
-        <select id="propOwnerFilter" onchange="filterProperties()" class="prop-filter-sel">
-          <option value="">All Owners</option>
-        </select>
-        <button class="btn btn-secondary btn-sm" onclick="syncPropertiesFromHostfully()" title="Sync from Hostfully API">🔄 Sync</button>
-        <button class="btn btn-primary btn-sm" onclick="openAddPropertyModal()">＋ Add Property</button>
+    </div>
+    <div class="prop-main">
+      <div class="prop-showing" id="propShowing">Loading properties…</div>
+      <div id="propList" class="prop-list"></div>
+      <div id="propEmpty" class="prop-empty" style="display:none">
+        <div style="font-size:36px;margin-bottom:12px;">🏘</div>
+        <div style="font-size:15px;font-weight:600;color:var(--accent2);margin-bottom:6px;">No properties found</div>
+        <div style="font-size:12px;color:var(--text3);">Try adjusting your search or filters</div>
       </div>
-    </div>
-    <div class="prop-showing" id="propShowing">Loading properties…</div>
-    <div id="propList" class="prop-list"></div>
-    <div id="propEmpty" class="prop-empty" style="display:none">
-      <div style="font-size:36px;margin-bottom:12px;">🏘</div>
-      <div style="font-size:15px;font-weight:600;color:var(--accent2);margin-bottom:6px;">No properties found</div>
-      <div style="font-size:12px;color:var(--text3);">Try adjusting your search or filters</div>
-    </div>
-  </div>
+    </div><!-- end prop-main -->
+  </div><!-- end prop-wrap -->
 </div>
 
 <!-- ADD/EDIT PROPERTY MODAL -->
