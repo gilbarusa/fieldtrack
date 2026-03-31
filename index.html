@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Willow — Property Manager | v2026-03-30 00:00</title>
+<title>Willow — Property Manager | v2026-03-31 21:00</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http%3A//www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%238a5f32'/%3E%3Crect x='10' y='22' width='44' height='36' fill='%23f4ede2'/%3E%3Crect x='8' y='18' width='48' height='6' rx='1' fill='%23c49a6c'/%3E%3Crect x='18' y='10' width='28' height='10' fill='%23e8dcc8'/%3E%3Crect x='16' y='8' width='32' height='4' rx='1' fill='%23c49a6c'/%3E%3Cline x1='10' y1='34' x2='54' y2='34' stroke='%23c49a6c' stroke-width='1'/%3E%3Cline x1='10' y1='44' x2='54' y2='44' stroke='%23c49a6c' stroke-width='1'/%3E%3Crect x='14' y='25' width='7' height='6' rx='1' fill='%235b8fc9'/%3E%3Crect x='25' y='25' width='7' height='6' rx='1' fill='%235b8fc9'/%3E%3Crect x='36' y='25' width='7' height='6' rx='1' fill='%23f0d080'/%3E%3Crect x='47' y='25' width='7' height='6' rx='1' fill='%235b8fc9'/%3E%3Crect x='14' y='36' width='7' height='6' rx='1' fill='%23f0d080'/%3E%3Crect x='25' y='36' width='7' height='6' rx='1' fill='%235b8fc9'/%3E%3Crect x='36' y='36' width='7' height='6' rx='1' fill='%235b8fc9'/%3E%3Crect x='47' y='36' width='7' height='6' rx='1' fill='%23f0d080'/%3E%3Crect x='22' y='12' width='6' height='4' rx='1' fill='%235b8fc9'/%3E%3Crect x='36' y='12' width='6' height='4' rx='1' fill='%23f0d080'/%3E%3Crect x='27' y='46' width='10' height='12' rx='1' fill='%238a5f32'/%3E%3Ccircle cx='35' cy='52' r='1' fill='%23f4ede2'/%3E%3Crect x='0' y='57' width='64' height='7' fill='%236b4e2a'/%3E%3Crect x='24' y='55' width='16' height='3' fill='%23a07840'/%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
@@ -349,6 +349,78 @@ textarea{resize:vertical;min-height:72px;}
 .cal-unit-panel-footer{padding:14px 20px;border-top:1px solid var(--border);background:var(--surface2);display:flex;gap:8px;justify-content:flex-end;}
 .cal-leg-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text2);}
 .cal-leg-dot{width:10px;height:10px;border-radius:3px;}
+
+/* ══ PRICING VIEW LAYER — additive only, no existing styles touched ══ */
+.cal-view-toggle{display:flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;flex-shrink:0;}
+.cal-view-btn{padding:5px 16px;font-family:'DM Mono',monospace;font-size:11px;font-weight:500;border:none;background:var(--surface);color:var(--text2);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.cal-view-btn.active{background:var(--accent);color:#fff;}
+.cal-view-btn:first-child{border-right:1px solid var(--border);}
+
+/* Pricing grid — mirrors booking grid layout exactly */
+.px-layer{display:flex;flex-direction:column;flex:1;min-height:0;}
+.px-body{display:flex;flex:1;min-height:0;overflow:hidden;}
+.px-units-col{width:200px;flex-shrink:0;border-right:2px solid var(--border2);overflow-y:auto;overflow-x:hidden;background:var(--surface);z-index:10;min-height:0;}
+.px-units-col::-webkit-scrollbar{display:none;}
+.px-header-spacer{height:76px;border-bottom:2px solid var(--border2);display:flex;align-items:center;padding:0 14px;background:var(--surface2);flex-shrink:0;}
+.px-unit-row{height:44px;display:flex;align-items:center;padding:0 14px;border-bottom:1px solid var(--border);cursor:default;flex-shrink:0;gap:6px;}
+.px-unit-name{font-size:12px;font-weight:500;color:var(--accent2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.px-unit-sub{font-size:9px;color:var(--text3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:1px;}
+.px-grid-outer{flex:1;overflow:auto;position:relative;}
+.px-grid-outer::-webkit-scrollbar{height:8px;width:8px;}
+.px-grid-outer::-webkit-scrollbar-track{background:var(--surface3);border-radius:4px;}
+.px-grid-outer::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
+.px-grid-outer::-webkit-scrollbar-thumb:hover{background:var(--accent);}
+.px-grid{position:relative;min-width:max-content;}
+.px-month-row{display:flex;height:24px;position:sticky;top:0;z-index:21;background:var(--surface2);border-bottom:1px solid var(--border);}
+.px-days-header{display:flex;height:52px;position:sticky;top:24px;z-index:20;background:var(--surface2);border-bottom:2px solid var(--border2);}
+.px-day-hdr{display:flex;flex-direction:column;align-items:center;justify-content:center;width:46px;flex-shrink:0;border-right:1px solid var(--border);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;gap:2px;}
+.px-day-hdr.weekend{background:rgba(181,120,74,.06);}
+.px-day-hdr.today{background:var(--green);color:#fff;}
+.px-day-hdr .day-num{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;line-height:1;}
+.px-day-hdr .day-name{font-size:8px;letter-spacing:.5px;}
+.px-rows{}
+.px-row{display:flex;height:44px;border-bottom:1px solid var(--border);position:relative;align-items:stretch;}
+/* Individual cells */
+.px-cell{width:46px;flex-shrink:0;height:100%;border-right:1px solid var(--border);position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;user-select:none;}
+.px-cell.weekend{background:rgba(181,120,74,.04);}
+.px-cell.today-col{background:rgba(37,102,69,.06);}
+.px-cell.occupied{background:rgba(0,0,0,.03);cursor:default;}
+.px-cell.available{cursor:crosshair;}
+.px-cell.available:hover{background:rgba(181,120,74,.1);}
+.px-cell.px-sel{background:rgba(30,87,153,.15)!important;outline:1px solid rgba(30,87,153,.45);outline-offset:-1px;z-index:2;}
+.px-cell.px-sel-hover{background:rgba(30,87,153,.08)!important;}
+/* Cell content */
+.px-cell-nights{font-size:8px;color:var(--text3);line-height:1;display:flex;align-items:center;gap:1px;}
+.px-cell-rate{font-size:10px;font-weight:600;color:var(--accent2);line-height:1;}
+.px-cell-override{font-size:8px;font-weight:600;color:var(--blue);line-height:1;}
+/* Occupied bar inside pricing grid */
+.px-occ-bar{position:absolute;top:8px;left:2px;right:2px;bottom:8px;border-radius:5px;opacity:.35;pointer-events:none;}
+
+/* Edit modal */
+.px-modal-section{border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+.px-modal-section+.px-modal-section{margin-top:10px;}
+.px-sec-hdr{display:flex;justify-content:space-between;align-items:center;padding:9px 14px;background:var(--surface2);font-size:11px;font-weight:600;color:var(--text2);letter-spacing:.3px;cursor:pointer;user-select:none;}
+.px-sec-body{padding:12px 14px;display:flex;flex-direction:column;gap:10px;}
+.px-row-f{display:flex;align-items:center;gap:8px;}
+.px-lbl{font-size:11px;color:var(--text2);min-width:100px;flex-shrink:0;}
+.px-inp{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text);outline:none;min-width:0;}
+.px-inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(181,120,74,.1);}
+.px-sel-inp{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text);outline:none;cursor:pointer;min-width:0;}
+.px-unit-tag{background:var(--accent);color:#fff;border-radius:20px;font-size:10px;font-weight:700;padding:2px 8px;margin-left:6px;}
+.px-date-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.px-sub{font-size:10px;color:var(--text3);margin-bottom:3px;}
+.px-unit-lbl{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;}
+.px-day-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.px-day-col-hdr{font-size:10px;color:var(--text3);margin-bottom:6px;}
+.px-day-checks{display:flex;flex-direction:column;gap:4px;}
+.px-day-check{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2);cursor:pointer;}
+.px-day-check input{cursor:pointer;accent-color:var(--accent);}
+.px-all-check{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);cursor:pointer;margin-bottom:4px;border-bottom:1px solid var(--border);padding-bottom:4px;}
+.px-all-check input{cursor:pointer;accent-color:var(--accent);}
+/* Legend for pricing */
+.px-legend{display:flex;gap:14px;align-items:center;margin-left:auto;flex-shrink:0;}
+.px-leg-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text2);}
+.px-leg-dot{width:10px;height:10px;border-radius:3px;}
 /* Block modal */
 .block-modal-info{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:16px;font-size:12px;color:var(--text2);}
 .block-modal-info strong{color:var(--accent2);}
@@ -608,13 +680,16 @@ textarea{resize:vertical;min-height:72px;}
   <div class="table-wrap">
     <table><thead><tr>
       <th onclick="setSortSel('apt')" style="cursor:pointer" title="Sort by Apt #">Apt # ↕</th>
-      <th onclick="setSortSel('name')" style="cursor:pointer" title="Sort by Tenant">Tenant ↕</th>
-      <th>Owner</th><th>Type</th>
+      <th title="Bedrooms">BR</th>
+      <th title="Bathrooms">Bath</th>
+      <th title="Access Code">Access</th>
       <th onclick="setSortSel('checkin')" style="cursor:pointer" title="Sort by Check-in">Check-in ↕</th>
+      <th>Type</th>
+      <th onclick="setSortSel('name')" style="cursor:pointer" title="Sort by Tenant">Tenant ↕</th>
       <th onclick="setSortSel('due')" style="cursor:pointer" title="Sort by Due Date">Due Date ↕</th>
       <th onclick="setSortSel('lease_end')" style="cursor:pointer" title="Sort by Lease End">Lease End ↕</th>
       <th onclick="setSortSel('amount')" style="cursor:pointer" title="Sort by Rent">Rent ↕</th>
-      <th>Balance</th><th>Note</th><th style="min-width:100px">Actions</th>
+      <th>Balance</th><th>Note</th><th>Owner</th><th style="min-width:100px">Actions</th>
     </tr></thead><tbody id="tableBody"></tbody></table>
     <div id="emptyState" class="empty-state" style="display:none"><div class="ei">🏠</div><p>No units match your filter.</p></div>
   </div>
@@ -650,6 +725,10 @@ textarea{resize:vertical;min-height:72px;}
         <input type="text" id="calSearch" placeholder="Search unit, tenant&hellip;" oninput="renderCalendar()">
       </div>
       <div class="spacer"></div>
+      <div class="cal-view-toggle" style="margin-right:10px;">
+        <button class="cal-view-btn active" id="calViewBookingBtn" onclick="setCalView('booking')">📅 Booking</button>
+        <button class="cal-view-btn" id="calViewPricingBtn" onclick="setCalView('pricing')">💲 Pricing</button>
+      </div>
       <div class="cal-legend">
         <div class="cal-leg-item"><div class="cal-leg-dot" style="background:#2563a8"></div>Long Term</div>
         <div class="cal-leg-item"><div class="cal-leg-dot" style="background:#7c4fbe"></div>M-to-M</div>
@@ -670,8 +749,32 @@ textarea{resize:vertical;min-height:72px;}
         </div>
       </div>
     </div>
-  </div>
-</div>
+  </div><!-- end cal-wrap (booking layer) -->
+
+  <!-- ═══ PRICING LAYER — separate, independent from booking calendar ═══ -->
+  <div id="pxLayer" style="display:none;flex:1;min-height:0;flex-direction:column;">
+    <div class="px-layer">
+      <div class="px-body">
+        <!-- Units column -->
+        <div class="px-units-col" id="pxUnitsCol">
+          <div class="px-header-spacer" style="flex-direction:column;align-items:flex-start;gap:2px;">
+            <span style="font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--text3);" id="pxUnitCount">Units (0)</span>
+            <span style="font-size:9px;color:var(--text3);">Drag to select dates</span>
+          </div>
+          <div id="pxUnitsList"></div>
+        </div>
+        <!-- Grid -->
+        <div class="px-grid-outer" id="pxGridOuter">
+          <div class="px-grid" id="pxGrid">
+            <div class="px-month-row" id="pxMonthRow"></div>
+            <div class="px-days-header" id="pxDaysHeader"></div>
+            <div class="px-rows" id="pxRows"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- end pxLayer -->
+</div><!-- end page-calendar -->
 
 <!-- Cal Action Picker Modal -->
 <div class="modal-overlay" id="calActionModal">
@@ -2249,8 +2352,10 @@ function fromRow(r) {
     note: r.note || '',
     history: hist,
     archived: r.archived || false,
+    archived_date: sd(r.archived_date),
     archivedDate: sd(r.archived_date || r.due),
     checkinDate: sd(checkinDate),
+    booking_id: r.booking_id || null,
   };
 }
 
@@ -2397,9 +2502,16 @@ function monthName(m,y){return new Date(y,m,1).toLocaleDateString('en-US',{month
 
 // ── STATS ──────────────────────────────────────────
 function updateStats(){
-  const a=data.filter(r=>!r.archived);let ov=0,sn=0,ok=0,av=0;
-  a.forEach(r=>{const s=dueStatus(r);if(s==='overdue')ov++;else if(s==='soon')sn++;else if(s==='ok')ok++;else if(s==='available')av++;});
-  ['overdue','soon','ok','avail','total'].forEach((k,i)=>document.getElementById('st-'+k).textContent=[ov,sn,ok,av,a.length][i]);
+  const a=data.filter(r=>!r.archived);
+  // Deduplicate by apt for stats — same logic as table
+  const aptSeen={};
+  const deduped=[];
+  a.forEach(r=>{
+    if(!aptSeen[r.apt]){aptSeen[r.apt]=true;deduped.push(r);}
+  });
+  let ov=0,sn=0,ok=0,av=0;
+  deduped.forEach(r=>{const s=dueStatus(r);if(s==='overdue')ov++;else if(s==='soon')sn++;else if(s==='ok')ok++;else if(s==='available')av++;});
+  ['overdue','soon','ok','avail','total'].forEach((k,i)=>document.getElementById('st-'+k).textContent=[ov,sn,ok,av,deduped.length][i]);
   document.getElementById('archCount').textContent=archived.length;
 }
 
@@ -2457,7 +2569,28 @@ function getEarliestBooking(activeRecord) {
 }
 
 function getFiltered(){
-  let rows=data.filter(r=>!r.archived);
+  // Deduplicate by apt — keep only the most relevant booking per apt
+  // Priority: 1) currently active (checkin <= today <= due), 2) next upcoming (checkin > today), 3) available
+  const today = new Date(); today.setHours(0,0,0,0);
+  const allActive = data.filter(r=>!r.archived);
+  const aptMap = {};
+  allActive.forEach(r => {
+    const apt = r.apt;
+    if (!aptMap[apt]) { aptMap[apt] = r; return; }
+    const existing = aptMap[apt];
+    // Score: current booking wins over future, future wins over available
+    function score(x) {
+      if (x.type === 'available' || !x.name) return 0;
+      const ci = x.checkin ? new Date(x.checkin+'T00:00:00') : null;
+      const due = x.due ? new Date(x.due+'T00:00:00') : null;
+      if (ci && due && ci <= today && due >= today) return 3; // active now
+      if (ci && ci > today) return 2; // upcoming
+      if (due && due >= today) return 1; // due in future
+      return 0;
+    }
+    if (score(r) > score(existing)) aptMap[apt] = r;
+  });
+  let rows = Object.values(aptMap);
   const q=document.getElementById('searchInput').value.toLowerCase();
   if(q)rows=rows.filter(r=>(r.apt||'').toLowerCase().includes(q)||(r.name||'').toLowerCase().includes(q)||(r.owner||'').toLowerCase().includes(q));
   if(currentStatFilter!=='all'){if(currentStatFilter==='overdue')rows=rows.filter(r=>dueStatus(r)==='overdue');else if(currentStatFilter==='soon')rows=rows.filter(r=>dueStatus(r)==='soon');else if(currentStatFilter==='ok')rows=rows.filter(r=>dueStatus(r)==='ok');else if(currentStatFilter==='available')rows=rows.filter(r=>r.type==='available');}
@@ -2486,11 +2619,21 @@ function renderTable(){
   document.getElementById('tableBody').innerHTML=rows.map(r=>{
     const s=dueStatus(r),rc=r.type==='available'?'row-available':s==='overdue'?'row-overdue':s==='soon'?'row-soon':'';
     const bc=r.type==='available'?'<span class="amount-none">—</span>':r.balance>0?`<span style="color:var(--red);font-weight:500">$${r.balance.toLocaleString()}</span>`:'<span style="color:var(--green)">✓ Paid</span>';
-    const proration = currentMonthProration(r);
+    // For short-stay: if unit has a booking_id with archive records, rent is already the current period amount
+    // Don't re-prorate it — just show it directly
+    const hasArchiveRecords = r.booking_id && archived.some(a => a.booking_id === r.booking_id && a.archived_date);
+    const proration = (!hasArchiveRecords) ? currentMonthProration(r) : null;
     const rentCell = r.type==='short-stay' && proration
       ? `<span class="amount-cell" title="Full stay: $${r.rent.toLocaleString()} — ${proration.days} days this month" style="cursor:help">$${proration.portion.toLocaleString()}<small style="color:var(--text3);font-size:9px;margin-left:2px">/${proration.days}d</small></span>`
       : r.rent ? `<span class="amount-cell">$${r.rent.toLocaleString()}</span>` : '<span class="amount-none">—</span>';
-    return`<tr class="apt-row ${rc}" onclick="openDetail(${r.id})"><td class="apt-num">${r.apt}</td><td>${r.name?`<div class="tenant-name">${r.name}</div>`:'<div class="tenant-empty">Vacant</div>'}</td><td class="owner-cell">${r.owner||'—'}</td><td>${typeBadge(r.type)}</td><td style="font-size:12px;color:var(--text2);white-space:nowrap">${r.checkin?fmtDate(r.checkin):'<span style="color:var(--text3)">—</span>'}</td><td>${dueCell(r)}</td><td style="font-size:12px;color:var(--blue);white-space:nowrap">${r.type!=='short-stay'&&r.lease_end?fmtDate(r.lease_end):'<span style="color:var(--text3)">—</span>'}</td><td>${rentCell}</td><td>${bc}</td><td><div class="note-preview">${r.note||''}</div></td><td class="actions-cell" onclick="event.stopPropagation()">${r.type!=='available'?`<button class="icon-btn ib-pay" title="Payment" onclick="openPayModal(${r.id})">💰</button>`:''}<button class="icon-btn ib-edit" title="Edit" onclick="openEditModal(${r.id})">✏️</button><button class="icon-btn ib-arch" title="Archive" onclick="archiveTenant(${r.id})">📦</button></td></tr>`;
+    // Get property data for this apt
+    const propRec = (propertiesData && propertiesData.length > 0)
+      ? propertiesData.find(p => p.internal_apt === r.apt || p.apt === r.apt)
+      : null;
+    const brCell = propRec && propRec.bedrooms != null ? propRec.bedrooms : '<span style="color:var(--text3)">—</span>';
+    const bathCell = propRec && propRec.bathrooms != null ? propRec.bathrooms : '<span style="color:var(--text3)">—</span>';
+    const accessCell = propRec && propRec.door_code ? `<span style="font-size:11px;font-family:'DM Mono',monospace;">${propRec.door_code}</span>` : '<span style="color:var(--text3)">—</span>';
+    return`<tr class="apt-row ${rc}" onclick="openDetail(${r.id})"><td class="apt-num">${r.apt}</td><td style="font-size:12px;text-align:center;">${brCell}</td><td style="font-size:12px;text-align:center;">${bathCell}</td><td style="font-size:11px;">${accessCell}</td><td style="font-size:12px;color:var(--text2);white-space:nowrap">${r.checkin?fmtDate(r.checkin):'<span style="color:var(--text3)">—</span>'}</td><td>${typeBadge(r.type)}</td><td>${r.name?`<div class="tenant-name">${r.name}</div>`:'<div class="tenant-empty">Vacant</div>'}</td><td>${dueCell(r)}</td><td style="font-size:12px;color:var(--blue);white-space:nowrap">${r.type!=='short-stay'&&r.lease_end?fmtDate(r.lease_end):'<span style="color:var(--text3)">—</span>'}</td><td>${rentCell}</td><td>${bc}</td><td><div class="note-preview">${r.note||''}</div></td><td class="owner-cell">${r.owner||'—'}</td><td class="actions-cell" onclick="event.stopPropagation()">${r.type!=='available'?`<button class="icon-btn ib-pay" title="Payment" onclick="openPayModal(${r.id})">💰</button>`:''}<button class="icon-btn ib-edit" title="Edit" onclick="openEditModal(${r.id})">✏️</button><button class="icon-btn ib-arch" title="Archive" onclick="archiveTenant(${r.id})">📦</button></td></tr>`;
   }).join('');
   document.getElementById('archiveBody').innerHTML=archived.filter(r=>r.archived).map(r=>`<tr style="opacity:.75"><td class="apt-num" style="font-size:15px">${r.apt}</td><td class="tenant-name">${r.name||'—'}</td><td class="owner-cell">${r.owner||'—'}</td><td>${typeBadge(r.type)}</td><td style="color:var(--text3);font-size:12px">${fmtDate(r.checkin||r.checkinDate||'')}</td><td style="color:var(--blue);font-size:12px">${fmtDate(r.lease_end||r.archivedDate||r.due||'')}</td><td><div class="note-preview">${r.note||''}</div></td><td class="actions-cell"><button class="icon-btn ib-restore" title="Restore" onclick="restoreTenant(${r.id})">↩️</button><button class="icon-btn ib-del" title="Delete" onclick="deletePermanent(${r.id})">🗑️</button></td></tr>`).join('')||'<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:20px">No archived tenants</td></tr>';
 }
@@ -2566,7 +2709,34 @@ async function saveTenant(){
     note:buildNoteField('fChannel','fChannelOther','fPhone','fEmail','fNote')
   };
   if(id){const i=data.findIndex(x=>x.id==id);data[i]={...data[i],...rec};await save(data[i]);toast(`Apt ${apt} updated ✓`,'success');}
-  else{const newRec={id:nextId++,...rec,history:[],archived:false};data.push(newRec);await save(newRec);toast(`Apt ${apt} added ✓`,'success');}
+  else{const newId=nextId++;const newRec={id:newId,...rec,history:[],archived:false,booking_id:'BK-'+newId};data.push(newRec);await save(newRec);toast(`Apt ${apt} added ✓`,'success');}
+
+  // Keep properties table in sync — upsert a property record for this apt
+  try{
+    const existing = propertiesData.find(p => p.internal_apt === apt || p.apt === apt);
+    if(!existing){
+      // New property record
+      const {data:maxRow} = await sb.from('properties').select('property_uid').order('property_uid',{ascending:false}).limit(1);
+      const nextUid = (maxRow&&maxRow.length ? maxRow[0].property_uid : 10100) + 1;
+      await sb.from('properties').insert({
+        apt, name: apt, internal_apt: apt,
+        owner: rec.owner || null,
+        status: rec.type === 'available' ? 'Inactive' : 'Active',
+        property_uid: nextUid,
+        updated_at: new Date().toISOString()
+      });
+      await loadProperties();
+    } else {
+      // Update status/owner on existing record
+      await sb.from('properties').update({
+        owner: rec.owner || null,
+        status: rec.type === 'available' ? 'Inactive' : 'Active',
+        updated_at: new Date().toISOString()
+      }).eq('apt', existing.apt);
+      await loadProperties();
+    }
+  } catch(e){ console.warn('properties sync:', e.message); }
+
   closeModal('editModal');renderTable();
 }
 
@@ -2681,47 +2851,67 @@ async function confirmPayment(){
     const ci           = r.checkin || r.due || '';
     const origCheckout = r.lease_end || r.due || '';
     const newCO        = (payType === 'extend' && newCheckout) ? newCheckout : origCheckout;
-    const checkinMonth = ci.substring(0, 7);
-    const newCOMonth   = newCO.substring(0, 7);
-
-    // Stay crosses months if checkin month differs from final checkout month
-    const crossesMonth = checkinMonth < newCOMonth;
+    const now          = new Date();
+    const curMonthStr  = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
 
     // Add this payment to live history
     r.history.unshift({ date: dateStr, amt, text: `$${amt.toLocaleString()} — payment${note ? ' | ' + note : ''}` });
 
-    // Total ever paid on this unit = all history entries with amt
-    const totalPaid = Math.round(r.history.reduce((s, h) => s + (typeof h.amt === 'number' ? h.amt : 0), 0) * 100) / 100;
+    if(payType === 'extend' && newCheckout) {
+      // ── EXTENSION PAYMENT ──────────────────────────────────────
+      // Only prorate the NEW payment across the new portion of the stay
+      // Previous months are already archived — don't recalculate them
+      const extSplits = calcProration(origCheckout, newCO, amt);
+      const pastExt   = extSplits.filter(s => s.monthStr < curMonthStr);
+      const currExt   = extSplits.filter(s => s.monthStr >= curMonthStr);
+      const currTotal = Math.round(currExt.reduce((s,x)=>s+x.portion,0)*100)/100;
 
-    if(!crossesMonth) {
-      // ── Pure same-month stay: accumulate, no archive ──
-      r.rent    = totalPaid;
-      r.balance = Math.max(0, (r.balance || 0) - amt);
-      if(payType === 'extend') { r.lease_end = newCO; r.due = newCO; }
+      // Archive any past-month portions of the extension
+      for(const s of pastExt) {
+        await upsertArchiveMonth(r, s.monthStr, s.portion, dateStr, note,
+          [{ date: dateStr, amt: s.portion, text: `$${s.portion.toLocaleString()} — extension ${s.month} (${s.days}d)` }]);
+      }
+
+      // Also archive the month BEFORE the extension if it's now past
+      // (e.g. March portion of original stay → archive)
+      const origSplits = calcProration(ci, origCheckout, r.rent);
+      for(const s of origSplits) {
+        if(s.monthStr < curMonthStr) {
+          await upsertArchiveMonth(r, s.monthStr, s.portion, dateStr, note,
+            [{ date: dateStr, amt: s.portion, text: `$${s.portion.toLocaleString()} — ${s.month} (${s.days}d of original stay)` }]);
+        }
+      }
+
+      r.lease_end = newCO;
+      r.due       = newCO;
+      // Live rent = current month portion of extension (the new days only)
+      r.rent      = currTotal > 0 ? currTotal : amt;
+      r.balance   = Math.max(0, (r.balance || 0) - amt);
       await save(r);
 
     } else {
-      // ── Stay spans months: prorate across all months ──
-      if(payType === 'extend') { r.lease_end = newCO; r.due = newCO; }
-      const splits     = calcProration(ci, newCO, totalPaid);
-      const now        = new Date();
-      const curMonthStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+      // ── REGULAR PAYMENT (no extension) ──────────────────────
+      const totalPaid    = Math.round(r.history.reduce((s,h)=>s+(typeof h.amt==='number'?h.amt:0),0)*100)/100;
+      const crossesMonth = ci.substring(0,7) < newCO.substring(0,7);
 
-      // Past months → archive; current/future months → stay live
-      const pastSplits    = splits.filter(s => s.monthStr <  curMonthStr);
-      const currentSplits = splits.filter(s => s.monthStr >= curMonthStr);
-      const currentTotal  = Math.round(currentSplits.reduce((s, x) => s + x.portion, 0) * 100) / 100;
-
-      // Archive all past months (upsert — replaces if already there)
-      for(const s of pastSplits) {
-        await upsertArchiveMonth(r, s.monthStr, s.portion, dateStr, note, [...r.history]);
+      if(!crossesMonth) {
+        r.rent    = totalPaid;
+        r.balance = Math.max(0, (r.balance || 0) - amt);
+        await save(r);
+      } else {
+        const splits      = calcProration(ci, newCO, totalPaid);
+        const pastSplits  = splits.filter(s => s.monthStr < curMonthStr);
+        const currSplits  = splits.filter(s => s.monthStr >= curMonthStr);
+        const currTotal   = Math.round(currSplits.reduce((s,x)=>s+x.portion,0)*100)/100;
+        for(const s of pastSplits) {
+          await upsertArchiveMonth(r, s.monthStr, s.portion, dateStr, note,
+            [{ date: dateStr, amt: s.portion, text: `$${s.portion.toLocaleString()} — ${s.month} (${s.days}d)` }]);
+        }
+        r.rent    = currTotal;
+        r.balance = Math.max(0, currTotal - (totalPaid - pastSplits.reduce((s,x)=>s+x.portion,0)));
+        r.balance = Math.max(0, r.balance);
+        await save(r);
       }
-
-      // Live unit shows only current month prorated amount
-      r.rent    = currentTotal;
-      r.balance = Math.max(0, currentTotal - (totalPaid - pastSplits.reduce((s,x)=>s+x.portion,0)));
-      r.balance = Math.max(0, r.balance);
-      await save(r);
     }
 
   } else if(isProrate) {
@@ -2816,7 +3006,8 @@ async function upsertArchiveMonth(r, monthStr, monthAmt, dateStr, note, historyE
       checkin: r.checkin || '',
       note: `${r.name} — ${monthLabel} — $${monthAmt.toLocaleString()}${note ? ' | ' + note : ''}`,
       history: historyEntries,
-      archived: true, archived_date: `${monthStr}-01`
+      archived: true, archived_date: `${monthStr}-01`,
+      booking_id: r.booking_id || ('BK-' + r.id)
     };
     await save(archRec);
     archived.unshift({ ...archRec, archivedDate: `${monthStr}-01`, checkinDate: r.checkin || '' });
@@ -3047,16 +3238,52 @@ async function deletePermanent(id){if(!confirm('Permanently delete? Cannot be un
 
 // ── DETAIL ─────────────────────────────────────────
 function openDetail(id){const r=data.find(x=>x.id===id);if(!r)return;detailId=id;document.getElementById('dApt').textContent=r.apt;document.getElementById('dName').textContent=r.name||'Vacant';document.getElementById('dOwner').textContent='Owner: '+(r.owner||'—');document.getElementById('dNote').value=r.note||'';const s=dueStatus(r);
-  // Rent display — full amount for short stays with monthly breakdown
-  let rentDisplay = r.rent?`$${r.rent.toLocaleString()}`:'—';
-  if(r.type==='short-stay'&&r.rent&&r.checkin&&(r.lease_end||r.due)){
-    const splits=calcProration(r.checkin, r.lease_end||r.due, r.rent);
-    if(splits.length>1){
-      const breakdown=splits.map(s=>`${s.month}: $${s.portion.toLocaleString()} (${s.days}d)`).join(' &middot; ');
-      rentDisplay=`$${r.rent.toLocaleString()} total<br><small style="color:var(--text3);font-size:10px;line-height:1.8">${breakdown}</small>`;
+  // Rent display — for short stays, read from actual archive records
+  let rentDisplay = r.rent ? `$${r.rent.toLocaleString()}` : '—';
+  if(r.type === 'short-stay' && r.checkin && (r.lease_end || r.due)){
+    // Find all archive records using booking_id (reliable) or fallback to apt+name
+    let archRecords = [];
+    if(r.booking_id){
+      archRecords = archived.filter(a =>
+        a.booking_id === r.booking_id && a.archived_date
+      ).sort((a,b) => (a.archived_date||'').localeCompare(b.archived_date||''));
+    }
+    if(!archRecords.length){
+      const checkinYM = (r.checkin||'').substring(0,7);
+      archRecords = archived.filter(a =>
+        a.apt === r.apt &&
+        (a.name||'').trim().toLowerCase() === (r.name||'').trim().toLowerCase() &&
+        a.archived_date && a.archived_date.substring(0,7) >= checkinYM
+      ).sort((a,b) => (a.archived_date||'').localeCompare(b.archived_date||''));
+    }
+    // Also include current live month
+    const liveTotal = r.rent || 0;
+    const grandTotal = Math.round((archRecords.reduce((s,a)=>s+(a.rent||0),0) + liveTotal)*100)/100;
+
+    if(archRecords.length > 0){
+      const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const archBreakdown = archRecords.map(a => {
+        const d = new Date((a.archived_date||a.due||'')+'T00:00:00');
+        const label = MONTHS[d.getMonth()] + ' ' + d.getFullYear();
+        return `${label}: <strong>$${(a.rent||0).toLocaleString()}</strong>`;
+      }).join(' &middot; ');
+      // Current month
+      const now = new Date();
+      const curLabel = MONTHS[now.getMonth()] + ' ' + now.getFullYear();
+      const fullBreakdown = archBreakdown + ` &middot; ${curLabel}: <strong>$${liveTotal.toLocaleString()}</strong>`;
+      rentDisplay = `$${grandTotal.toLocaleString()} total<br><small style="color:var(--text3);font-size:10px;line-height:1.8">${fullBreakdown}</small>`;
+    } else {
+      // No archive records — fall back to proration calc
+      const totalPaidAll = Math.round((r.history||[]).reduce((s,h)=>s+(typeof h.amt==='number'?h.amt:0),0)*100)/100;
+      const displayRent = totalPaidAll > r.rent ? totalPaidAll : r.rent;
+      const splits = calcProration(r.checkin, r.lease_end||r.due, displayRent);
+      if(splits.length > 1){
+        const breakdown = splits.map(s=>`${s.month}: <strong>$${s.portion.toLocaleString()}</strong> (${s.days}d)`).join(' &middot; ');
+        rentDisplay = `$${displayRent.toLocaleString()} total<br><small style="color:var(--text3);font-size:10px;line-height:1.8">${breakdown}</small>`;
+      }
     }
   }
-  document.getElementById('dRows').innerHTML=[['Lease Type',typeBadge(r.type)],['Check-in',r.checkin?fmtDate(r.checkin):'—'],['Rent / Stay',rentDisplay],['Balance Owed',r.balance>0?`<span style="color:var(--red)">$${r.balance.toLocaleString()}</span>`:'<span style="color:var(--green)">✓ Paid</span>'],['Next Due',r.due?`<span class="${s==='overdue'?'due-overdue':s==='soon'?'due-soon':''}">${fmtDate(r.due)}</span>`:'—'],['Lease End',r.type!=='short-stay'&&r.lease_end?`<span style="color:var(--blue)">${fmtDate(r.lease_end)}</span>`:'—']].map(([l,v])=>`<div class="detail-row"><span class="dr-label">${l}</span><span class="dr-val">${v}</span></div>`).join('');const hist=r.history||[];document.getElementById('dHistory').innerHTML=hist.length?hist.map(h=>`<div class="history-item"><span class="hi-date">${fmtDate(h.date)}</span><span class="hi-text">${h.text}</span></div>`).join(''):'<div style="color:var(--text3);font-size:11px;padding:8px 0">No payments recorded yet.</div>';const btns=[];if(r.type!=='available')btns.push(`<button class="btn btn-primary btn-sm" onclick="openPayModal(${id})">💰 Payment</button>`);btns.push(`<button class="btn btn-secondary btn-sm" onclick="openEditModal(${id})">✏️ Edit</button>`);if(r.type!=='available')btns.push(`<button class="btn btn-ghost btn-sm" onclick="archiveTenant(${id})">📦 Archive</button>`);btns.push(`<button class="btn btn-ghost btn-sm" onclick="openClearHistoryModal(${id})" style="color:var(--red);border-color:var(--red-border);" title="Clear payment history">🗑 History</button>`);
+  document.getElementById('dRows').innerHTML=[['Lease Type',typeBadge(r.type)],['Check-in',r.checkin?fmtDate(r.checkin):'—'],['Total Stay',rentDisplay],['Balance Owed',r.balance>0?`<span style="color:var(--red)">$${r.balance.toLocaleString()}</span>`:'<span style="color:var(--green)">✓ Paid</span>'],['Next Due',r.due?`<span class="${s==='overdue'?'due-overdue':s==='soon'?'due-soon':''}">${fmtDate(r.due)}</span>`:'—'],['Lease End',r.type!=='short-stay'&&r.lease_end?`<span style="color:var(--blue)">${fmtDate(r.lease_end)}</span>`:'—']].map(([l,v])=>`<div class="detail-row"><span class="dr-label">${l}</span><span class="dr-val">${v}</span></div>`).join('');const hist=r.history||[];document.getElementById('dHistory').innerHTML=hist.length?hist.map(h=>`<div class="history-item"><span class="hi-date">${fmtDate(h.date)}</span><span class="hi-text">${h.text}</span></div>`).join(''):'<div style="color:var(--text3);font-size:11px;padding:8px 0">No payments recorded yet.</div>';const btns=[];if(r.type!=='available')btns.push(`<button class="btn btn-primary btn-sm" onclick="openPayModal(${id})">💰 Payment</button>`);btns.push(`<button class="btn btn-secondary btn-sm" onclick="openEditModal(${id})">✏️ Edit</button>`);if(r.type!=='available')btns.push(`<button class="btn btn-ghost btn-sm" onclick="archiveTenant(${id})">📦 Archive</button>`);btns.push(`<button class="btn btn-ghost btn-sm" onclick="openClearHistoryModal(${id})" style="color:var(--red);border-color:var(--red-border);" title="Clear payment history">🗑 History</button>`);
   // Delete button — available for any booking (not permanent long-term leases)
   btns.push(`<button class="btn btn-ghost btn-sm" onclick="deleteUnitRecord(${id})" style="color:var(--red);border-color:var(--red-border);">🗑 Delete</button>`);
   document.getElementById('dActions').innerHTML=btns.join('');document.getElementById('detailOverlay').classList.add('open');}
@@ -3120,7 +3347,7 @@ async function loadProperties() {
       public_name: settingsMap[p.apt] || null
     }));
   } catch(e) {
-    console.warn('properties table not found, using units data as fallback', e);
+    console.error('loadProperties error:', e.message, e);
     // Fallback: derive property list from the units table (active, unique apts)
     propertiesData = data
       .filter(r => !r.archived)
@@ -3149,7 +3376,7 @@ async function loadProperties() {
 
 function populatePropOwnerFilter() {
   const sel = document.getElementById('propOwnerFilter');
-  if (!sel) return;
+  if (!sel) return; // safe to call during boot before Properties tab is rendered
   const owners = [...new Set(propertiesData.map(p => p.owner).filter(Boolean))].sort();
   // keep first "All Owners" option
   sel.innerHTML = '<option value="">All Owners</option>' +
@@ -3427,34 +3654,6 @@ async function runBackup() {
       const toDelete = allBackups.slice(0, allBackups.length - 10).map(b => b.id);
       await sb.from('backups').delete().in('id', toDelete);
     }
-
-    // ── Also download a local .sql file ──
-    function rowToSQL(table, conflictCol, r) {
-      const cols = Object.keys(r).join(',');
-      const vals = Object.values(r).map(function(v) {
-        if (v === null) return 'NULL';
-        if (typeof v === 'object') return "'" + JSON.stringify(v).replace(/'/g, "''") + "'";
-        return "'" + String(v).replace(/'/g, "''") + "'";
-      }).join(',');
-      return 'INSERT INTO ' + table + ' (' + cols + ') VALUES (' + vals + ') ON CONFLICT (' + conflictCol + ') DO NOTHING;';
-    }
-    const sqlParts = [
-      '-- Willow PropDesk Full Backup -- ' + new Date().toLocaleString(),
-      '-- units: ' + unitsRows.length + ' | properties: ' + (propertiesRows||[]).length + ' | property_settings: ' + (settingsRows||[]).length,
-      '',
-      '-- UNITS',
-    ].concat(
-      unitsRows.map(function(r){ return rowToSQL('units','id',r); }),
-      ['','-- PROPERTIES'],
-      (propertiesRows||[]).map(function(r){ return rowToSQL('properties','apt',r); }),
-      ['','-- PROPERTY_SETTINGS'],
-      (settingsRows||[]).map(function(r){ return rowToSQL('property_settings','apt',r); })
-    );
-    const blob = new Blob([sqlParts.join('\n')], {type:'text/plain'});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `willow-backup-${new Date().toISOString().slice(0,10)}.sql`;
-    a.click();
 
     localStorage.setItem(BACKUP_KEY, Date.now().toString());
     await checkBackupStatus();
@@ -4262,8 +4461,30 @@ function collectedInMonth(r,y,m){
 // ══════════════════════════════════════════════════════
 //  DASHBOARD
 // ══════════════════════════════════════════════════════
+// ── Deduplicated active units (one row per apt, best booking) ──
+function dedupActive(){
+  const all = data.filter(r=>!r.archived);
+  const today = new Date(); today.setHours(0,0,0,0);
+  const aptMap = {};
+  all.forEach(r=>{
+    if(!aptMap[r.apt]){aptMap[r.apt]=r;return;}
+    const ex=aptMap[r.apt];
+    function score(x){
+      if(x.type==='available'||!x.name) return 0;
+      const ci=x.checkin?new Date(x.checkin+'T00:00:00'):null;
+      const due=x.due?new Date(x.due+'T00:00:00'):null;
+      if(ci&&due&&ci<=today&&due>=today) return 3;
+      if(ci&&ci>today) return 2;
+      if(due&&due>=today) return 1;
+      return 0;
+    }
+    if(score(r)>score(ex)) aptMap[r.apt]=r;
+  });
+  return Object.values(aptMap);
+}
+
 function renderDashboard(){
-  const active=data.filter(r=>!r.archived);
+  const active=dedupActive();
   const occ=active.filter(r=>r.type!=='available'&&r.name);
   const totalRent=occ.reduce((s,r)=>s+r.rent,0);
   const totalBal=occ.reduce((s,r)=>s+r.balance,0);
@@ -4415,12 +4636,12 @@ function openRDrill(typeKey, typeLabel, y, m) {
 function renderReports(){
   const y=reportYear,m=reportMonth;
   document.getElementById('reportMonthLabel').textContent=monthName(m,y);
-  const active=data.filter(r=>!r.archived);
+  const active=dedupActive();
   const occ=active.filter(r=>r.type!=='available'&&r.name);
   const dim=daysInMonth(y,m);
 
-  // Days rented — max based on ALL 79 units
-  const totalActiveUnits = active.length; // all units regardless of status
+  // Days rented — max based on deduplicated units
+  const totalActiveUnits = active.length; // deduplicated unit count
   let ltD=0,mtmD=0,shD=0;
   occ.forEach(r=>{const d=rentedDaysInMonth(r,y,m);if(r.type==='long-term')ltD+=d;else if(r.type==='month-to-month')mtmD+=d;else if(r.type==='short-stay')shD+=d;});
   const totD=ltD+mtmD+shD,maxD=Math.max(ltD,mtmD,shD,1);
@@ -4430,7 +4651,7 @@ function renderReports(){
 
   // ── Short Stay Performance KPIs ──
   // Pool = all short-stay + all available units (33 total)
-  const ssPool = data.filter(r=>!r.archived && (r.type==='short-stay' || r.type==='available'));
+  const ssPool = active.filter(r=>r.type==='short-stay' || r.type==='available');
   const ssOcc  = occ.filter(r=>r.type==='short-stay'); // currently occupied short-stays
   const ssRevenue = ssOcc.reduce((s,r)=>s+collectedInMonth(r,y,m),0);
   const ssNights  = shD; // nights booked from above
@@ -4916,6 +5137,18 @@ function renderCalendar() {
 
 
 
+    // Build set of dates that are same-day turnovers for this apt
+    // (a date where one bar ends AND another begins)
+    const turnoverDates = new Set();
+    for(let i=0;i<bars.length;i++){
+      for(let j=0;j<bars.length;j++){
+        if(i===j) continue;
+        if(bars[i].to && bars[j].from && bars[i].to === bars[j].from){
+          turnoverDates.add(bars[i].to);
+        }
+      }
+    }
+
     bars.forEach(bar=>{
       if(!bar.from&&!bar.to) return;
       const cf=bar.from<winStart?winStart:bar.from;
@@ -4924,6 +5157,27 @@ function renderCalendar() {
       const s=dateIdx(cf), e=dateIdx(ct);
       if(s<0||e<0) return;
       const span=e-s+1; if(span<1) return;
+
+      // Same-day turnover adjustments
+      // If this bar's END date is a turnover date → shrink right half of last cell
+      const endIsTurnover = turnoverDates.has(bar.to) && bar.to >= winStart && bar.to <= winEnd;
+      // If this bar's START date is a turnover date → push into right half of first cell
+      const startIsTurnover = turnoverDates.has(bar.from) && bar.from >= winStart && bar.from <= winEnd;
+
+      const HALF = COL_W / 2;
+      let leftPx  = s * COL_W + 2;
+      let widthPx = span * COL_W - 4;
+
+      if(startIsTurnover){
+        // Start at right half of first cell
+        leftPx  += HALF;
+        widthPx -= HALF;
+      }
+      if(endIsTurnover){
+        // End at left half of last cell
+        widthPx -= HALF;
+      }
+      if(widthPx < 4) widthPx = 4;
 
       let barCls='cal-bar ';
       let icon='🏠';
@@ -4938,7 +5192,7 @@ function renderCalendar() {
 
       const barEl=document.createElement('div');
       barEl.className=barCls;
-      barEl.style.cssText='left:'+(s*COL_W+2)+'px;width:'+(span*COL_W-4)+'px;overflow:hidden;z-index:5;';
+      barEl.style.cssText='left:'+leftPx+'px;width:'+widthPx+'px;overflow:hidden;z-index:5;';
       barEl.title=`${bar.name} · ${bar.from} → ${bar.to}`;
 
       // Sticky label: floats within the visible portion of the bar
@@ -5173,6 +5427,7 @@ async function saveCalBooking() {
 
   try {
     const bookingNote = note ? note + ' | cal-booking' : 'cal-booking';
+    const calBookingId = 'BK-cal-' + Date.now();
 
     // Build history — include payment entry if amount entered
     const history = [];
@@ -5204,7 +5459,8 @@ async function saveCalBooking() {
       const newRec = {
         id: newId, apt: _calApt, owner, name, type,
         rent, balance: finalBalance, checkin, due: checkout, lease_end: checkout,
-        note: bookingNote, history, archived: false, archived_date: null
+        note: bookingNote, history, archived: false, archived_date: null,
+        booking_id: 'BK-' + newId
       };
       const {error} = await sb.from('units').insert(dbRow(newRec));
       if(error) throw new Error(error.message);
@@ -5558,6 +5814,13 @@ async function boot() {
     const titleMatch = document.title.match(/v(\d{4}-\d{2}-\d{2} \d{2}:\d{2})/);
     const stamp = document.getElementById('buildStamp');
     if (stamp && titleMatch) stamp.textContent = 'updated ' + titleMatch[1].replace('-','').replace('-','').replace(' ',', ').replace(/^(\d{4})(\d{2})(\d{2})/, (_,y,m,d)=>{ const mn=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; return mn[parseInt(m)-1]+' '+parseInt(d)+' '+y; });
+    // Load properties table so BR/Bath/Access show in Units tab
+    try {
+      await loadProperties();
+      console.log('propertiesData loaded:', propertiesData.length);
+    } catch(propErr) {
+      console.warn('loadProperties failed during boot:', propErr.message);
+    }
     renderTable();
     initCalScroll();
     subscribeRealtime();
@@ -5971,5 +6234,513 @@ setInterval(updateHeaderClock, 1000);
     </div>
   </div>
 </div>
+
+<!-- ═══ PRICING EDIT MODAL ═══ -->
+<div class="modal-overlay" id="pxEditModal">
+  <div class="modal" style="max-width:500px;">
+    <div class="modal-header">
+      <div>
+        <h2 style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--text);">
+          Edit Pricing
+          <span class="px-unit-tag" id="pxEditCount">0</span>
+        </h2>
+        <div id="pxEditNames" style="font-size:11px;color:var(--text3);margin-top:3px;max-width:400px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal('pxEditModal')">&#x2715;</button>
+    </div>
+    <div class="modal-body" style="display:flex;flex-direction:column;gap:0;padding:16px 0;">
+
+      <!-- Date Range -->
+      <div class="px-modal-section" style="margin:0 24px 10px;">
+        <div class="px-sec-hdr">📅 Date Range</div>
+        <div class="px-sec-body">
+          <div class="px-date-grid">
+            <div>
+              <div class="px-sub">Start Date</div>
+              <input type="date" id="pxEditStart" class="px-inp" style="width:100%;">
+            </div>
+            <div>
+              <div class="px-sub">End Date</div>
+              <input type="date" id="pxEditEnd" class="px-inp" style="width:100%;">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pricing -->
+      <div class="px-modal-section" style="margin:0 24px 10px;">
+        <div class="px-sec-hdr">💲 Pricing</div>
+        <div class="px-sec-body">
+          <div class="px-row-f">
+            <span class="px-lbl">Daily Rate</span>
+            <select id="pxRateType" class="px-sel-inp" style="max-width:130px;" onchange="pxOnRateTypeChange()">
+              <option value="fixed">Fixed</option>
+              <option value="inc_pct">Increase %</option>
+              <option value="dec_pct">Decrease %</option>
+              <option value="inc_amt">Increase $</option>
+              <option value="dec_amt">Decrease $</option>
+            </select>
+            <input type="number" id="pxRateVal" class="px-inp" placeholder="0" min="0" step="1" style="max-width:90px;">
+            <span id="pxRateUnit" style="font-size:12px;color:var(--text3);min-width:20px;">$</span>
+          </div>
+          <div class="px-row-f">
+            <span class="px-lbl">Minimum Stay</span>
+            <input type="number" id="pxMinStay" class="px-inp" placeholder="1" min="1" step="1" style="max-width:80px;">
+            <span style="font-size:12px;color:var(--text3);">night(s)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Check-in / checkout restrictions (collapsible) -->
+      <div class="px-modal-section" style="margin:0 24px 0;">
+        <div class="px-sec-hdr" id="pxRestrictHdr" onclick="pxToggleRestrictions()">
+          <span>📋 Check-in &amp; Checkout Restrictions</span>
+          <span id="pxRestrictArrow">▼</span>
+        </div>
+        <div class="px-sec-body" id="pxRestrictBody" style="display:none;">
+          <div class="px-day-grid">
+            <div>
+              <div class="px-day-col-hdr">Allow check-in on:</div>
+              <label class="px-all-check"><input type="checkbox" id="pxCiAll" onchange="pxToggleAllDays('ci',this.checked)" checked> All days</label>
+              <div class="px-day-checks" id="pxCiChecks"></div>
+            </div>
+            <div>
+              <div class="px-day-col-hdr">Allow checkout on:</div>
+              <label class="px-all-check"><input type="checkbox" id="pxCoAll" onchange="pxToggleAllDays('co',this.checked)" checked> All days</label>
+              <div class="px-day-checks" id="pxCoChecks"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end modal-body -->
+    <div class="modal-footer" style="justify-content:space-between;">
+      <button class="btn btn-secondary" onclick="pxResetAndClose()" style="color:var(--red);border-color:var(--red-border);">Reset</button>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-secondary" onclick="closeModal('pxEditModal')">Cancel</button>
+        <button class="btn btn-primary" id="pxSaveBtn" onclick="pxSave()">💾 Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════
+// PRICING VIEW — completely separate layer, no existing code touched
+// ════════════════════════════════════════════════════════
+
+// ── State ──
+let _pxView = false;              // true = pricing layer visible
+let _pxPeriods = [];              // pricing_periods rows from Supabase
+let _pxUnits = [];                // current unit list (same filter as booking view)
+let _pxDates = [];                // date strings for grid window
+const PX_COL_W = 46;             // cell width (slightly wider than booking to fit $price)
+
+// Selection state
+let _pxDragging = false;
+let _pxDragStartDate = null;
+let _pxDragStartApt = null;
+let _pxSelApts = new Set();
+let _pxSelStart = null;
+let _pxSelEnd = null;
+
+// ── Toggle ──
+function setCalView(mode) {
+  _pxView = (mode === 'pricing');
+  document.getElementById('calViewBookingBtn').classList.toggle('active', !_pxView);
+  document.getElementById('calViewPricingBtn').classList.toggle('active',  _pxView);
+
+  // Booking layer: cal-wrap is always display:flex when page-calendar is active
+  const calWrap = document.querySelector('#page-calendar .cal-wrap');
+  const pxLayer = document.getElementById('pxLayer');
+
+  if (_pxView) {
+    if (calWrap) calWrap.style.display = 'none';
+    pxLayer.style.display = 'flex';
+    pxRender();
+  } else {
+    if (calWrap) calWrap.style.display = '';
+    pxLayer.style.display = 'none';
+    // Clear selection
+    _pxClearSel();
+  }
+}
+
+// ── Load from Supabase ──
+async function pxLoadPeriods() {
+  try {
+    const {data, error} = await sb.from('pricing_periods').select('*');
+    if (!error && data) _pxPeriods = data;
+  } catch(e) { console.warn('pricing_periods table not found'); }
+}
+
+// ── Get override for a specific apt + date ──
+function pxGetPeriod(apt, dateStr) {
+  const hits = _pxPeriods.filter(p =>
+    p.apt === apt && p.start_date <= dateStr && p.end_date >= dateStr
+  );
+  if (!hits.length) return null;
+  return hits.sort((a,b) => b.id - a.id)[0]; // most recent wins
+}
+
+// ── Main render ──
+function pxRender() {
+  const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const MONTH_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const DAY_ABBR   = ['SU','MO','TU','WE','TH','FR','SA'];
+  const todayStr   = new Date().toISOString().split('T')[0];
+
+  // Same date window as booking calendar: 90 back, 150 forward
+  _pxDates = [];
+  const _t = new Date();
+  const from = new Date(_t); from.setDate(_t.getDate() - 90);
+  const to   = new Date(_t); to.setDate(_t.getDate() + 150);
+  for (let d = new Date(from); d <= to; d.setDate(d.getDate()+1)) {
+    _pxDates.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'));
+  }
+
+  // ── Build unit list (same dedup logic as booking — short-stay filter) ──
+  const q = (document.getElementById('calSearch')?.value || '').toLowerCase();
+  let units = data.filter(r => !r.archived);
+  // Apply same type filter as booking view
+  const activeTypeFilter = document.querySelector('[data-caltype].active')?.dataset?.caltype || 'all';
+  if (activeTypeFilter !== 'all') {
+    if (activeTypeFilter === 'available') {
+      units = units.filter(r => r.type === 'available' || dueStatus(r) === 'available');
+    } else {
+      units = units.filter(r => r.type === activeTypeFilter);
+    }
+  }
+  if (q) units = units.filter(r =>
+    (r.apt||'').toLowerCase().includes(q) ||
+    (r.name||'').toLowerCase().includes(q) ||
+    (r.owner||'').toLowerCase().includes(q)
+  );
+
+  // Deduplicate by apt (same logic as booking)
+  const byApt = new Map();
+  for (const r of units) {
+    const prev = byApt.get(r.apt);
+    if (!prev) { byApt.set(r.apt, r); continue; }
+    const rFut = !!(r.checkin && r.checkin > todayStr);
+    const pFut = !!(prev.checkin && prev.checkin > todayStr);
+    if (!rFut && pFut) { byApt.set(r.apt, r); continue; }
+    if (!pFut && rFut) continue;
+    if ((r.id||0) < (prev.id||0)) byApt.set(r.apt, r);
+  }
+  _pxUnits = [...byApt.values()].sort((a,b) => (a.apt||'').localeCompare(b.apt||'', undefined, {numeric:true}));
+
+  document.getElementById('pxUnitCount').textContent = `Units (${_pxUnits.length})`;
+
+  // ── Units column ──
+  document.getElementById('pxUnitsList').innerHTML = _pxUnits.map(r => {
+    const meta = getCalUnitMeta ? (getCalUnitMeta()[r.apt] || {}) : {};
+    return `<div class="px-unit-row">
+      <div style="flex:1;overflow:hidden;">
+        <div class="px-unit-name">${r.apt}</div>
+        ${meta.brBath ? `<div class="px-unit-sub">${meta.brBath}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  // ── Month label row ──
+  let lastMo = -1, monthGroups = [];
+  _pxDates.forEach(d => {
+    const mo = parseInt(d.substring(5,7))-1, yr = parseInt(d.substring(0,4));
+    if (mo !== lastMo) { monthGroups.push({mo, yr, count:1}); lastMo = mo; }
+    else monthGroups[monthGroups.length-1].count++;
+  });
+  document.getElementById('pxMonthRow').innerHTML = monthGroups.map(g =>
+    `<div style="width:${g.count*PX_COL_W}px;flex-shrink:0;display:flex;align-items:center;padding:0 8px;
+      font-family:'Playfair Display',serif;font-size:12px;font-weight:700;color:var(--accent2);
+      border-right:2px solid var(--border2);box-sizing:border-box;background:var(--surface2);">
+      ${MONTH_SHORT[g.mo]} ${g.yr}</div>`
+  ).join('');
+
+  // ── Day headers ──
+  document.getElementById('pxDaysHeader').innerHTML = _pxDates.map(d => {
+    const dt = new Date(d+'T00:00:00'), dow = dt.getDay();
+    const isWE = dow===0||dow===6, isToday = d===todayStr;
+    return `<div class="px-day-hdr${isWE?' weekend':''}${isToday?' today':''}">
+      <div class="day-name">${DAY_ABBR[dow]}</div>
+      <div class="day-num">${dt.getDate()}</div>
+    </div>`;
+  }).join('');
+
+  // ── Rows ──
+  const rowsEl = document.getElementById('pxRows');
+  rowsEl.innerHTML = '';
+
+  _pxUnits.forEach((r, rowIdx) => {
+    const rowDiv = document.createElement('div');
+    rowDiv.className = 'px-row';
+    rowDiv.style.width = (_pxDates.length * PX_COL_W) + 'px';
+
+    // Build occupied ranges for this apt
+    const occupied = [];
+    if (r.type !== 'available' && r.name) {
+      const bf = r.checkin || _pxDates[0];
+      const bt = r.due || r.lease_end || '';
+      if (bt) occupied.push({from: bf, to: bt, type: r.type});
+    }
+    // Future bookings
+    (data.filter(x => !x.archived && x.apt===r.apt && x.id!==r.id && x.checkin && x.checkin > todayStr)).forEach(x => {
+      occupied.push({from: x.checkin, to: x.due||x.lease_end||x.checkin, type: x.type});
+    });
+    // Past stays in window
+    (archived.filter(x => x.apt===r.apt && (x.archivedDate||x.due))).forEach(x => {
+      const from = x.checkin || x.archivedDate || x.due;
+      const to   = x.archivedDate || x.due;
+      if (to >= _pxDates[0]) occupied.push({from, to, type: x.type});
+    });
+
+    // Get blocks
+    const aptBlocks = getBlocks ? (getBlocks()[r.apt] || []) : [];
+
+    let cellsHtml = '';
+    _pxDates.forEach((d, di) => {
+      const dt  = new Date(d+'T00:00:00'), dow = dt.getDay();
+      const isWE    = dow===0||dow===6;
+      const isToday = d === todayStr;
+      const isOcc   = occupied.some(b => d >= b.from && d <= b.to);
+      const isBlk   = aptBlocks.some(b => d >= b.from && d <= b.to);
+      const isSel   = _pxSelApts.has(r.apt) && _pxSelStart && _pxSelEnd &&
+                      d >= _pxSelStart && d <= _pxSelEnd;
+
+      let cls = 'px-cell';
+      if (isWE)    cls += ' weekend';
+      if (isToday) cls += ' today-col';
+      if (isSel)   cls += ' px-sel';
+
+      if (isOcc || isBlk) {
+        // Show occupied — colour bar inside cell
+        const occType = isBlk ? '__block__' : (occupied.find(b => d>=b.from && d<=b.to)?.type || '');
+        const barColor = occType==='long-term' ? '#2563a8'
+          : occType==='month-to-month' ? '#7c4fbe'
+          : occType==='short-stay'     ? '#e07818'
+          : occType==='__block__'      ? '#c0392b' : '#888';
+        cls += ' occupied';
+        cellsHtml += `<div class="${cls}" data-apt="${r.apt}" data-date="${d}">
+          <div class="px-occ-bar" style="background:${barColor};"></div>
+        </div>`;
+      } else {
+        // Available — show pricing
+        const period   = pxGetPeriod(r.apt, d);
+        const propRow  = propertiesData ? propertiesData.find(p => p.internal_apt===r.apt||p.apt===r.apt) : null;
+        const rate     = period?.nightly_rate ?? propRow?.base_price ?? null;
+        const minNts   = period?.min_stay     ?? propRow?.min_stay   ?? null;
+        const hasOverride = !!period;
+
+        const nightEl = minNts != null
+          ? `<span class="px-cell-nights">🌙${minNts}</span>` : '';
+        const rateEl  = rate != null
+          ? `<span class="${hasOverride ? 'px-cell-override' : 'px-cell-rate'}">$${Math.round(rate)}</span>` : '';
+
+        cls += ' available';
+        cellsHtml += `<div class="${cls}" data-apt="${r.apt}" data-date="${d}"
+          onmousedown="pxOnMouseDown(event,'${r.apt}','${d}')"
+          onmousemove="pxOnMouseMove(event,'${r.apt}','${d}')"
+          onmouseup="pxOnMouseUp(event)"
+          title="Apt ${r.apt} · ${d}${rate!=null?' · $'+Math.round(rate)+'/nt':''}${minNts!=null?' · min '+minNts+' nights':''}">
+          ${nightEl}${rateEl}
+        </div>`;
+      }
+    });
+
+    rowDiv.innerHTML = cellsHtml;
+    rowsEl.appendChild(rowDiv);
+  });
+
+  // Set explicit widths
+  const totalW = _pxDates.length * PX_COL_W;
+  document.getElementById('pxGrid').style.width         = totalW + 'px';
+  document.getElementById('pxRows').style.width         = totalW + 'px';
+  document.getElementById('pxDaysHeader').style.width   = totalW + 'px';
+  document.getElementById('pxMonthRow').style.width     = totalW + 'px';
+
+  // Sync scroll: units col and grid outer scroll together vertically
+  const unitsCol  = document.getElementById('pxUnitsCol');
+  const gridOuter = document.getElementById('pxGridOuter');
+  gridOuter.onscroll = () => { unitsCol.scrollTop = gridOuter.scrollTop; };
+  unitsCol.onscroll  = () => { gridOuter.scrollTop = unitsCol.scrollTop; };
+
+  // Scroll to today
+  if (!gridOuter._pxScrolled) {
+    gridOuter._pxScrolled = true;
+    const todayIdx = _pxDates.indexOf(todayStr);
+    if (todayIdx >= 0) gridOuter.scrollLeft = Math.max(0, todayIdx * PX_COL_W - 150);
+  }
+}
+
+// ── Mouse selection ──
+function pxOnMouseDown(e, apt, dateStr) {
+  e.preventDefault();
+  _pxDragging = true;
+  _pxDragStartDate = dateStr;
+  _pxDragStartApt  = apt;
+  if (!e.shiftKey) {
+    _pxSelApts  = new Set();
+    _pxSelStart = dateStr;
+    _pxSelEnd   = dateStr;
+  }
+  _pxSelApts.add(apt);
+  _pxSelStart = _pxSelStart && e.shiftKey ? (_pxSelStart < dateStr ? _pxSelStart : dateStr) : dateStr;
+  _pxSelEnd   = dateStr;
+  _pxHighlight();
+}
+
+function pxOnMouseMove(e, apt, dateStr) {
+  if (!_pxDragging) return;
+  const a = _pxDragStartDate, b = dateStr;
+  _pxSelStart = a < b ? a : b;
+  _pxSelEnd   = a > b ? a : b;
+  _pxSelApts.add(apt);
+  _pxHighlight();
+}
+
+function pxOnMouseUp(e) {
+  if (!_pxDragging) return;
+  _pxDragging = false;
+  if (_pxSelApts.size > 0 && _pxSelStart) pxOpenEditModal();
+}
+
+// Global mouseup so release outside a cell still opens modal
+document.addEventListener('mouseup', (e) => {
+  if (_pxDragging) {
+    _pxDragging = false;
+    if (_pxSelApts.size > 0 && _pxSelStart) pxOpenEditModal();
+  }
+});
+
+function _pxHighlight() {
+  document.querySelectorAll('#pxRows .px-cell').forEach(cell => {
+    const inSel = _pxSelApts.has(cell.dataset.apt) &&
+      cell.dataset.date >= _pxSelStart &&
+      cell.dataset.date <= _pxSelEnd;
+    cell.classList.toggle('px-sel', inSel);
+  });
+}
+
+function _pxClearSel() {
+  _pxSelApts  = new Set();
+  _pxSelStart = null;
+  _pxSelEnd   = null;
+  document.querySelectorAll('#pxRows .px-sel').forEach(c => c.classList.remove('px-sel'));
+}
+
+// ── Edit modal ──
+function pxOpenEditModal() {
+  const apts = [..._pxSelApts];
+  document.getElementById('pxEditCount').textContent = `${apts.length} propert${apts.length===1?'y':'ies'}`;
+  document.getElementById('pxEditNames').textContent = apts.join(', ');
+  document.getElementById('pxEditStart').value = _pxSelStart || '';
+  document.getElementById('pxEditEnd').value   = _pxSelEnd   || '';
+  document.getElementById('pxRateType').value  = 'fixed';
+  document.getElementById('pxRateUnit').textContent = '$';
+  document.getElementById('pxRateVal').value   = '';
+  document.getElementById('pxMinStay').value   = '';
+
+  // Prefill from first apt if single selection
+  if (apts.length === 1 && _pxSelStart) {
+    const period  = pxGetPeriod(apts[0], _pxSelStart);
+    const propRow = propertiesData?.find(p => p.internal_apt===apts[0]||p.apt===apts[0]);
+    const rate    = period?.nightly_rate ?? propRow?.base_price ?? null;
+    const minNts  = period?.min_stay     ?? propRow?.min_stay   ?? null;
+    if (rate   != null) document.getElementById('pxRateVal').value  = Math.round(rate);
+    if (minNts != null) document.getElementById('pxMinStay').value  = minNts;
+  }
+
+  // Build day checkboxes
+  const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+  ['pxCiChecks','pxCoChecks'].forEach(id => {
+    document.getElementById(id).innerHTML = DAYS.map(d =>
+      `<label class="px-day-check"><input type="checkbox" value="${d}" checked> ${d}</label>`
+    ).join('');
+  });
+  document.getElementById('pxCiAll').checked = true;
+  document.getElementById('pxCoAll').checked = true;
+  document.getElementById('pxRestrictBody').style.display = 'none';
+  document.getElementById('pxRestrictArrow').textContent  = '▼';
+
+  openModal('pxEditModal');
+}
+
+function pxToggleRestrictions() {
+  const body   = document.getElementById('pxRestrictBody');
+  const arrow  = document.getElementById('pxRestrictArrow');
+  const isOpen = body.style.display !== 'none';
+  body.style.display = isOpen ? 'none' : 'block';
+  arrow.textContent  = isOpen ? '▼' : '▲';
+}
+
+function pxOnRateTypeChange() {
+  const t = document.getElementById('pxRateType').value;
+  document.getElementById('pxRateUnit').textContent = t.endsWith('_pct') ? '%' : '$';
+}
+
+function pxToggleAllDays(type, checked) {
+  const id = type==='ci' ? 'pxCiChecks' : 'pxCoChecks';
+  document.querySelectorAll(`#${id} input[type=checkbox]`).forEach(cb => cb.checked = checked);
+}
+
+function pxResetAndClose() {
+  _pxClearSel();
+  closeModal('pxEditModal');
+}
+
+async function pxSave() {
+  const startDate = document.getElementById('pxEditStart').value;
+  const endDate   = document.getElementById('pxEditEnd').value;
+  if (!startDate || !endDate)  { toast('Please set start and end dates','error'); return; }
+  if (endDate < startDate)     { toast('End date must be after start','error'); return; }
+
+  const rateType = document.getElementById('pxRateType').value;
+  const rateVal  = parseFloat(document.getElementById('pxRateVal').value);
+  const minStay  = parseInt(document.getElementById('pxMinStay').value)   || null;
+  const apts     = [..._pxSelApts];
+
+  if (isNaN(rateVal) && !minStay) { toast('Enter a rate or minimum stay','error'); return; }
+
+  const btn = document.getElementById('pxSaveBtn');
+  btn.textContent = '⏳ Saving…'; btn.disabled = true;
+
+  try {
+    const records = apts.map(apt => {
+      let nightly_rate = null;
+      if (!isNaN(rateVal)) {
+        if (rateType === 'fixed') {
+          nightly_rate = rateVal;
+        } else {
+          const existing = pxGetPeriod(apt, startDate);
+          const propRow  = propertiesData?.find(p => p.internal_apt===apt||p.apt===apt);
+          const base     = existing?.nightly_rate ?? propRow?.base_price ?? 0;
+          if      (rateType==='inc_pct') nightly_rate = Math.round(base * (1 + rateVal/100));
+          else if (rateType==='dec_pct') nightly_rate = Math.max(0, Math.round(base * (1 - rateVal/100)));
+          else if (rateType==='inc_amt') nightly_rate = base + rateVal;
+          else if (rateType==='dec_amt') nightly_rate = Math.max(0, base - rateVal);
+        }
+      }
+      return {apt, start_date: startDate, end_date: endDate, nightly_rate, min_stay: minStay};
+    });
+
+    const {error} = await sb.from('pricing_periods').insert(records);
+    if (error) throw new Error(error.message);
+
+    await pxLoadPeriods();
+    closeModal('pxEditModal');
+    _pxClearSel();
+    pxRender();
+    toast(`Pricing saved for ${apts.length} propert${apts.length===1?'y':'ies'} ✓`, 'success');
+  } catch(e) {
+    toast('Save failed: ' + e.message, 'error');
+  } finally {
+    btn.textContent = '💾 Save'; btn.disabled = false;
+  }
+}
+
+// Load pricing periods at boot (non-blocking)
+pxLoadPeriods().catch(()=>{});
+</script>
+
 </body>
 </html>
