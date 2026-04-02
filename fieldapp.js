@@ -5,22 +5,23 @@
  */
 
 //  STATE 
-var state = JSON.parse(localStorage.getItem('ft5')||'null') || {
+var state = {
   owners:[], technicians:[], properties:[], jobs:[], users:[],
   _nextId:1, _initialized:false
 };
-if(!state._initialized && localStorage.getItem('ft4')){
-  try{ state=JSON.parse(localStorage.getItem('ft4')); state._initialized=true; }catch(e){}
-}
+var _stateSaveTimer = null;
 
 var currentUser = null;
 var _toastTimer = null;
 var _theme = localStorage.getItem('ft_theme')||'dark';
-if(_theme==='light') document.body.classList.add('light');
+if(_theme==='light'){
+  if(document.body){ document.body.classList.add('light'); }
+  else{ document.addEventListener('DOMContentLoaded',function(){ document.body.classList.add('light'); }); }
+}
 
-// Persist session across refreshes
+// Persist session across refreshes (sessionStorage = tab, localStorage = remember me)
 (function(){
-  var saved = sessionStorage.getItem('ft_session');
+  var saved = localStorage.getItem('ft_remember') || sessionStorage.getItem('ft_session');
   if(saved){
     try{
       var u=JSON.parse(saved);
@@ -32,8 +33,17 @@ if(_theme==='light') document.body.classList.add('light');
 
 //  HELPERS 
 function save(){
-  try{ localStorage.setItem('ft5',JSON.stringify(state)); }
-  catch(e){ alert('[!] Storage full! Export your data now.'); return; }
+  clearTimeout(_stateSaveTimer);
+  _stateSaveTimer = setTimeout(function(){
+    fetch('state.php',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({state:state})
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(d){ if(!d.ok) console.warn('Save failed:',d); })
+    .catch(function(e){ console.warn('Save error:',e); });
+  }, 600);
   var t=document.getElementById('save-toast');
   if(t){ t.style.display='block'; clearTimeout(_toastTimer); _toastTimer=setTimeout(function(){ t.style.display='none'; },1800); }
   updateStorageBar();
@@ -82,22 +92,13 @@ function hlTerm(text,term){
   return escaped.slice(0,idx)+'<mark>'+escaped.slice(idx,idx+esc(term).length)+'</mark>'+escaped.slice(idx+esc(term).length);
 }
 
-//  API KEY 
+//  API KEY (stored server-side in state only — not in localStorage)
 function getApiKey(){
-  // Sync: if state has key but localStorage doesn't, restore it
-  if(state._apiKey && !localStorage.getItem('ft_apikey')){
-    localStorage.setItem('ft_apikey', state._apiKey);
-  }
-  // If localStorage has key but state doesn't, restore it
-  if(!state._apiKey && localStorage.getItem('ft_apikey')){
-    state._apiKey = localStorage.getItem('ft_apikey');
-  }
-  return localStorage.getItem('ft_apikey') || state._apiKey || '';
+  return state._apiKey || '';
 }
 function setApiKey(k){
   var key=k.trim();
-  localStorage.setItem('ft_apikey',key);
-  state._apiKey=key; // also save in state so it exports/imports with data
+  state._apiKey=key;
   save();
 }
 
@@ -169,6 +170,9 @@ function doLogin(){
 }
 function setCurrentUser(user){
   currentUser=user;
+  var remember=(document.getElementById('remember-me')||{}).checked;
+  if(remember){ localStorage.setItem('ft_remember',JSON.stringify({id:user.id})); }
+  else { localStorage.removeItem('ft_remember'); }
   sessionStorage.setItem('ft_session',JSON.stringify({id:user.id}));
   document.getElementById('topbar-name').textContent=user.name;
   document.getElementById('topbar-role').textContent=user.role==='admin'?'Admin':'Tech';
@@ -182,7 +186,7 @@ function setCurrentUser(user){
   else showPage('myjobs');
 }
 function doLogout(){
-  currentUser=null; sessionStorage.removeItem('ft_session');
+  currentUser=null; sessionStorage.removeItem('ft_session'); localStorage.removeItem('ft_remember');
   document.getElementById('app').classList.remove('visible');
   document.getElementById('login-screen').style.display='flex';
   document.getElementById('login-user').value=''; document.getElementById('login-pass').value='';
@@ -284,19 +288,19 @@ document.addEventListener('click',function(e){
 });
 
 //  NEW BADGE 
-// seenJobs stored per-user: { userId: [jobId, ...] }
+// seenJobs stored server-side in state: { userId: [jobId, ...] }
 function hasSeenJob(jobId){
-  var seen=JSON.parse(localStorage.getItem('ft_seen')||'{}');
   if(!currentUser) return true;
+  var seen=state.seenJobs||{};
   return (seen[currentUser.id]||[]).indexOf(+jobId)>=0;
 }
 function markJobSeen(jobId){
-  var seen=JSON.parse(localStorage.getItem('ft_seen')||'{}');
   if(!currentUser) return;
-  if(!seen[currentUser.id]) seen[currentUser.id]=[];
-  if(seen[currentUser.id].indexOf(+jobId)<0){
-    seen[currentUser.id].push(+jobId);
-    localStorage.setItem('ft_seen',JSON.stringify(seen));
+  if(!state.seenJobs) state.seenJobs={};
+  if(!state.seenJobs[currentUser.id]) state.seenJobs[currentUser.id]=[];
+  if(state.seenJobs[currentUser.id].indexOf(+jobId)<0){
+    state.seenJobs[currentUser.id].push(+jobId);
+    save();
   }
 }
 
@@ -321,6 +325,7 @@ function renderJobCard(job, editable, searchTerm){
     +'<div class="job-name">'+hlTerm(pname,st)+newBadge+'</div>'
     +'<div class="job-addr">'+hlTerm(addr,st)+(isAdmin()&&tech?' <span style="font-size:11px;color:var(--muted)"> '+esc(tech.name)+'</span>':'')+'</div>'
     +'<div class="job-meta">'+job.date+' &nbsp;&nbsp; '+hrs.toFixed(1)+'h &nbsp;&nbsp; '+fmt$(exps)+' exp &nbsp;&nbsp; <span style="opacity:.7">[photo] '+photos+'</span></div>'
+    +(job.notes?'<div style="font-size:12px;font-weight:700;color:var(--text);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:600px">'+esc(job.notes.length>80?job.notes.slice(0,80)+'…':job.notes)+'</div>':'')
     +'</div>'
     +'<div style="display:flex;align-items:center;gap:6px;flex-shrink:0">'+assignedTag+statusTag+'<span class="job-chevron" id="jchev-'+job.id+'">&#x25BE;</span></div>'
     +'</div>'
@@ -341,6 +346,26 @@ function buildJobBody(job, editable, st){
       +'<span style="color:var(--muted)">Assigned to: <strong style="color:var(--text)">'+esc(tech?tech.name:'?')+'</strong></span>'
       +'<button class="btn btn-secondary btn-xs ml-auto" onclick="openReassignJob('+job.id+')">Reassign</button>'
       +'</div>';
+  }
+
+  // ── TIMER + ACTION BUTTONS (top, before notes) ──────────────────────
+  if(job.status==='open'||job.status==='in_progress'||job.status==='waiting_parts'){
+    h+='<div style="display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 6px;align-items:center">';
+    if(job.timerStart){
+      h+='<button class="btn btn-secondary btn-sm" onclick="pauseJobTimer('+job.id+')">&#x23F8; Pause</button>';
+      h+='<span class="blink" style="font-size:12px;color:#f59e0b;font-family:var(--fm);font-weight:600" id="timer-'+job.id+'">&#x23F1; Running</span>';
+    } else {
+      h+='<button class="btn btn-primary btn-sm" onclick="startJobTimer('+job.id+')">&#x25B6; Start</button>';
+      if(job.status==='in_progress') h+='<span style="font-size:12px;color:#f59e0b;font-family:var(--fm)">&#x23F8; Paused</span>';
+    }
+    if(job.status!=='waiting_parts'){
+      h+='<button class="btn btn-secondary btn-sm" onclick="setJobStatus('+job.id+',\'waiting_parts\')">&#x23F3; Waiting for Parts</button>';
+    } else {
+      h+='<button class="btn btn-secondary btn-sm" onclick="setJobStatus('+job.id+',\'open\')">&#x1F527; Back to Open</button>';
+    }
+    h+='<button class="btn btn-complete btn-sm" onclick="event.stopPropagation();markComplete('+job.id+')">&#x2713; Mark Complete</button>';
+    if(isAdmin()) h+='<button class="btn btn-secondary btn-sm" onclick="exportJobPDF('+job.id+')">[pdf] PDF</button>';
+    h+='</div>';
   }
 
   if(job.notes){ h+='<div style="font-size:13px;color:var(--muted);margin:10px 0;padding:10px;background:var(--surface2);border-radius:8px;line-height:1.5">'+hlTerm(job.notes,st)+'</div>'; }
@@ -365,7 +390,7 @@ function buildJobBody(job, editable, st){
       +'<div class="form-group" style="margin-bottom:0"><label>Date</label><input type="date" id="ah-date-'+job.id+'" value="'+today()+'"></div>'
       +'<div class="form-group" style="margin-bottom:0"><label>Hours</label><input type="number" id="ah-hrs-'+job.id+'" min="0.25" max="24" step="0.25" placeholder="e.g. 3.5" inputmode="decimal"></div>'
       +'</div>'
-      +'<div class="form-group" style="margin-bottom:8px"><label>Work Description</label><textarea id="ah-desc-'+job.id+'" rows="2" placeholder="What did you do?"></textarea></div>'
+      +'<div class="form-group" style="margin-bottom:8px"><label>Work Description <button class="btn btn-ai btn-xs" style="margin-left:6px" onclick="rephraseWorkDesc('+job.id+')">&#x2728; Rephrase</button></label><textarea id="ah-desc-'+job.id+'" rows="2" placeholder="What did you do?"></textarea></div>'
       +'<button class="btn btn-primary btn-sm" onclick="addHour('+job.id+')">+ Add Hours</button>'
       +'</div>';
   }
@@ -449,17 +474,7 @@ function buildJobBody(job, editable, st){
   }
   h+='</div>';
 
-  // Complete / status buttons
-  if(job.status==='open'&&!isAdmin()){
-    h+='<div class="alert alert-warn" style="margin-top:12px;font-size:12px">[!] Marking complete locks this job for you  the admin can still edit it.</div>';
-    h+='<button class="btn btn-complete btn-block" style="margin-top:8px" onclick="markComplete('+job.id+')">[OK] Mark Job as Complete</button>';
-  }
-  if(job.status==='open'&&isAdmin()){
-    h+='<div class="flex flex-wrap" style="margin-top:12px;gap:8px">'
-      +'<button class="btn btn-complete" onclick="markComplete('+job.id+')">[OK] Mark Complete</button>'
-      +'<button class="btn btn-secondary" onclick="exportJobPDF('+job.id+')">[pdf] Export PDF</button>'
-      +'</div>';
-  }
+  // (action buttons moved to top — see below)
   if(job.status==='complete'){
     h+='<div class="complete-banner">[OK] Completed '+esc(job.completedDate||'')+'.</div>';
     if(isAdmin()){
@@ -477,6 +492,29 @@ function buildJobBody(job, editable, st){
           +'</div>';
       }
     }
+  }
+  // On My Way — tech only, open/in_progress jobs with client phone
+  if(!isAdmin() && (job.status==='open'||job.status==='in_progress') && job.clientPhone){
+    h+='<div style="margin-top:10px;padding:10px;background:rgba(196,127,0,.08);border:1px solid rgba(196,127,0,.2);border-radius:8px">';
+    h+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:8px">&#x1F697; On My Way</div>';
+    h+='<div class="flex flex-wrap" style="gap:6px">';
+    h+='<button class="btn btn-secondary btn-sm" onclick="sendOnMyWay('+job.id+',5)">5 min</button>';
+    h+='<button class="btn btn-secondary btn-sm" onclick="sendOnMyWay('+job.id+',10)">10 min</button>';
+    h+='<button class="btn btn-secondary btn-sm" onclick="sendOnMyWay('+job.id+',30)">30 min</button>';
+    h+='</div></div>';
+  }
+  // Message client — admin only, any status, with client phone
+  if(isAdmin() && job.clientPhone){
+    h+='<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">';
+    h+='<input type="text" id="msg-client-'+job.id+'" placeholder="&#x1F4AC; Message client..." style="flex:1;min-width:160px;font-size:12px;padding:4px 8px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text)">';
+    h+='<button class="btn btn-secondary btn-sm" onclick="sendJobClientMessage('+job.id+')">&#x1F4F2; Send</button>';
+    h+='</div>';
+  }
+  // Delete job — admin only
+  if(isAdmin()){
+    h+='<div style="margin-top:12px;border-top:1px solid var(--border);padding-top:8px">';
+    h+='<button class="btn btn-danger btn-sm" onclick="deleteJob('+job.id+')">&#x1F5D1; Delete Job</button>';
+    h+='</div>';
   }
   return h;
 }
@@ -510,7 +548,7 @@ function loadThumbs(job){
 function refreshJobCard(jobId){
   var job=getJob(jobId); if(!job) return;
   var card=document.getElementById('jcard-'+jobId); if(!card) return;
-  var editable=isAdmin()||(job.techId===currentUser.techId&&job.status==='open');
+  var editable=isAdmin()||(job.techId===currentUser.techId&&(job.status==='open'||job.status==='in_progress'||job.status==='waiting_parts'));
   var div=document.createElement('div');
   div.innerHTML=renderJobCard(job,editable,'');
   card.replaceWith(div.firstChild);
@@ -555,10 +593,14 @@ function saveReassign(){
   if(!techId){ alert('Select a technician.'); return; }
   var job=getJob(jobId);
   job.techId=techId; job.assignedByAdmin=true;
+  // Reset status to open if job was complete or pending
+  if(job.status==='complete'||job.status==='pending_approval'){
+    job.status='open'; job.completedDate=null;
+  }
   // Reset seen so new tech gets NEW badge
-  var seen=JSON.parse(localStorage.getItem('ft_seen')||'{}');
-  Object.keys(seen).forEach(function(uid){ var idx=seen[uid].indexOf(jobId); if(idx>=0) seen[uid].splice(idx,1); });
-  localStorage.setItem('ft_seen',JSON.stringify(seen));
+  if(state.seenJobs){
+    Object.keys(state.seenJobs).forEach(function(uid){ var idx=state.seenJobs[uid].indexOf(jobId); if(idx>=0) state.seenJobs[uid].splice(idx,1); });
+  }
   save(); closeModal('modal-reassign'); renderAllJobs();
 }
 function adminReopenJob(jobId){
@@ -654,9 +696,66 @@ function closeLightbox(){ document.getElementById('lightbox').classList.remove('
 var _lb=document.getElementById('lightbox'); if(_lb) _lb.addEventListener('click',function(e){ if(e.target===this) closeLightbox(); });
 function markComplete(jobId){
   if(!confirm('Mark as complete?\n'+(isAdmin()?'Admin can still edit it after.':'You will not be able to edit this job anymore.'))) return;
-  var job=getJob(jobId); job.status='complete'; job.completedDate=today();
+  var job=getJob(jobId);
+  if(job.timerStart){
+    clearInterval(_timerIntervals[jobId]);
+    var elapsed=Math.round((Date.now()-job.timerStart)/3600000*100)/100;
+    if(elapsed>=0.01){ job.hours=job.hours||[]; job.hours.push({id:uid(),date:today(),hours:elapsed,desc:'Timer (auto)'}); }
+    job.timerStart=null;
+  }
+  if(isAdmin()){
+    job.status='complete'; job.completedDate=today();
+  } else {
+    job.status='pending_approval'; job.completedDate=today();
+  }
   save();
-  if(isAdmin()) refreshJobCard(jobId); else renderMyJobs();
+  refreshJobCard(jobId);
+}
+
+var _timerIntervals={};
+
+function startJobTimer(jobId){
+  var job=getJob(jobId); if(!job) return;
+  if(job.timerStart){ alert('Timer already running.'); return; }
+  job.timerStart=Date.now();
+  job.status='in_progress';
+  save();
+  setTimeout(function(){ refreshJobCard(jobId); }, 50);
+  _timerIntervals[jobId]=setInterval(function(){
+    var el=document.getElementById('timer-'+jobId);
+    if(!el){ clearInterval(_timerIntervals[jobId]); return; }
+    var j=getJob(jobId); if(!j||!j.timerStart){ clearInterval(_timerIntervals[jobId]); return; }
+    var sec=Math.floor((Date.now()-j.timerStart)/1000);
+    var hh=Math.floor(sec/3600), mm=Math.floor((sec%3600)/60), ss=sec%60;
+    el.textContent='\u23f1 '+(hh?hh+'h ':'')+mm+'m '+ss+'s';
+  },1000);
+}
+
+function pauseJobTimer(jobId){
+  var job=getJob(jobId); if(!job||!job.timerStart){ alert('No timer running.'); return; }
+  clearInterval(_timerIntervals[jobId]);
+  var elapsed=Math.round((Date.now()-job.timerStart)/3600000*100)/100;
+  var desc=prompt('Work description (optional):',job.lastTimerDesc||'')||'';
+  if(elapsed>=0.01){ job.hours=job.hours||[]; job.hours.push({id:uid(),date:today(),hours:elapsed,desc:desc||'Timer (auto)'}); }
+  job.lastTimerDesc=desc;
+  job.timerStart=null;
+  job.status='in_progress';
+  save();
+  setTimeout(function(){ refreshJobCard(jobId); }, 50);
+}
+
+function setJobStatus(jobId, status){
+  var job=getJob(jobId); if(!job) return;
+  if(job.timerStart){
+    clearInterval(_timerIntervals[jobId]);
+    var elapsed=Math.round((Date.now()-job.timerStart)/3600000*100)/100;
+    if(elapsed>=0.01){ job.hours=job.hours||[]; job.hours.push({id:uid(),date:today(),hours:elapsed,desc:'Timer (auto)'}); }
+    job.timerStart=null;
+  }
+  job.status=status;
+  if(status==='open'||status==='waiting_parts') job.completedDate=null;
+  save();
+  refreshJobCard(jobId);
 }
 
 //  AI 
@@ -893,7 +992,7 @@ function renderDashboard(){
       +'<span style="font-family:var(--fm);font-size:11px;color:var(--muted);width:82px;flex-shrink:0">'+j.date+'</span>'
       +'<span style="flex:1;font-size:13px">'+(tech?esc(tech.name):'')+'</span>'
       +'<span class="tag tag-blue" style="font-size:10px">'+(prop?esc(prop.name):'')+'</span>'
-      +'<span class="tag '+(j.status==='open'?'tag-open':'tag-complete')+'">'+j.status+'</span>'
+      +'<span class="tag '+({'open':'tag-open','in_progress':'tag-yellow','waiting_parts':'tag-blue','pending_approval':'tag-pink','complete':'tag-complete'}[j.status]||'tag-open')+'">'+({'open':'Open','in_progress':'In Progress','waiting_parts':'Waiting Parts','pending_approval':'Pending Approval','complete':'Complete'}[j.status]||j.status)+'</span>'
       +'</div>';
   }).join(''):'<div class="empty-state" style="padding:20px"><span class="emoji">[empty]</span>No jobs yet</div>';
   var byP={};
@@ -985,7 +1084,7 @@ function generateReport(){
   jobs.sort(function(a,b){ return b.date.localeCompare(a.date); }).forEach(function(j){
     var tech=getTech(j.techId),prop=getProp(j.propId),h=jobTotalHours(j),l=jobTotalLabor(j),e=jobTotalExp(j);
     html+='<tr><td style="font-family:var(--fm);font-size:11px">'+j.date+'</td><td>'+(tech?esc(tech.name):'')+'</td><td>'+(prop?esc(prop.name):'')+'</td>'
-      +'<td><span class="tag '+(j.status==='open'?'tag-open':'tag-complete')+'">'+j.status+'</span></td>'
+      +'<td><span class="tag '+({'open':'tag-open','in_progress':'tag-yellow','waiting_parts':'tag-blue','pending_approval':'tag-pink','complete':'tag-complete'}[j.status]||'tag-open')+'">'+({'open':'Open','in_progress':'In Progress','waiting_parts':'Waiting Parts','pending_approval':'Pending Approval','complete':'Complete'}[j.status]||j.status)+'</span></td>'
       +'<td>'+h.toFixed(2)+'</td><td>'+fmt$(l)+'</td><td>'+fmt$(e)+'</td><td><strong>'+fmt$(l+e)+'</strong></td>'
       +'<td><button class="btn btn-secondary btn-xs" onclick="exportJobPDF('+j.id+')">[pdf]</button></td></tr>';
   });
@@ -1011,7 +1110,7 @@ function exportReportPDF(){
     +'td{padding:7px 10px;border-bottom:1px solid #f3f4f6}'
     +'.report-header{font-size:14px;font-weight:700;margin:16px 0 8px;padding-bottom:6px;border-bottom:2px solid #e5e7eb}'
     +'.tag{padding:2px 8px;border-radius:99px;font-size:10px}'
-    +'.tag-open{background:#dbeafe;color:#1e40af}.tag-complete{background:#dcfce7;color:#166534}'
+    +'.tag-open{background:#dbeafe;color:#1e40af}.tag-complete{background:#dcfce7;color:#166534}.tag-yellow{background:#fef9c3;color:#854d0e}.tag-blue{background:#dbeafe;color:#1e40af}.tag-pink{background:#fce7f3;color:#9d174d}'
     +'mark{background:#fef9c3}h1{font-size:20px;color:#c47f00}@media print{button{display:none}}'
     +'</style></head><body>'
     +'<h1>FieldTrack Report</h1><p style="color:#6b7280;margin-bottom:20px">Period: <strong>'+period+'</strong> &nbsp;&nbsp; Generated: '+new Date().toLocaleString()+'</p>'
@@ -1139,9 +1238,9 @@ function generateShareLink(){
   });
 }
 function copyShareLink(url){
-  var full='https://tech.willowpa.com/'+url;
-  if(navigator.clipboard) navigator.clipboard.writeText(full).then(function(){ alert('[OK] Copied!'); });
-  else prompt('Copy this link:',full);
+  var full=url.indexOf('http')===0?url:('https://tech.willowpa.com/'+url.replace(/^\/+/,''));
+  if(navigator.clipboard){ navigator.clipboard.writeText(full).then(function(){ alert('Copied: '+full); }).catch(function(){ prompt('Copy this link:',full); }); }
+  else { prompt('Copy this link:',full); }
 }
 function toggleJobPaid(jobId){
   var job=getJob(jobId); job.isPaid=!job.isPaid; save(); refreshJobCard(jobId);
@@ -1165,36 +1264,61 @@ function renderRequestsPage(){
   })
   .catch(function(e){ el.innerHTML='<div class="alert alert-warn">Could not load requests.php: '+e.message+'</div>'; });
 }
-function renderReqList(){
+function renderReqList(showAll){
   var el=document.getElementById('req-list'); if(!el) return;
-  if(!_requests.length){ el.innerHTML='<div class="empty-state"><span class="emoji">[empty]</span>No requests yet.<br><small>Share: <strong>tech.willowpa.com/book.html</strong></small></div>'; return; }
-  var sorted=_requests.slice().sort(function(a,b){ return b.createdAt.localeCompare(a.createdAt); });
-  el.innerHTML=sorted.map(function(req,idx){
+  var newReqs=_requests.filter(function(r){ return (r.status||'new')==='new'; });
+  var linkedReqs=_requests.filter(function(r){ return r.status==='linked'||r.status==='done'; });
+  var visible=showAll?_requests:newReqs;
+  var toggleHtml='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">'
+    +'<div style="font-size:13px;color:var(--muted)">'+newReqs.length+' new'+(linkedReqs.length?' &nbsp;|&nbsp; <span style="color:var(--accent2)">'+linkedReqs.length+' assigned</span>':'')+'</div>'
+    +(linkedReqs.length?'<button class="btn btn-secondary btn-xs" onclick="renderReqList('+(showAll?'false':'true')+')">'+(showAll?'Hide Assigned':'Show All')+'</button>':'')
+    +'</div>';
+  if(!visible.length){ el.innerHTML=toggleHtml+'<div class="empty-state"><span class="emoji">&#x1F4ED;</span>No active requests.</div>'; return; }
+  var sorted=visible.slice().sort(function(a,b){ return (b.createdAt||'').localeCompare(a.createdAt||''); });
+  el.innerHTML=toggleHtml+sorted.map(function(req){
     var sc=req.status==='new'?'tag-pink':req.status==='linked'?'tag-blue':'tag-green';
     return '<div class="card" style="margin-bottom:12px">'
       +'<div class="flex flex-wrap" style="justify-content:space-between;margin-bottom:10px">'
       +'<div><div style="font-size:15px;font-weight:600">'+esc(req.name||'?')+'</div>'
       +'<div style="font-size:12px;color:var(--muted);font-family:var(--fm)">'+esc(req.phone||'')+'&nbsp;&nbsp;'+esc((req.createdAt||'').slice(0,10))+'</div></div>'
-      +'<span class="tag '+sc+'">'+req.status+'</span></div>'
+      +'<span class="tag '+sc+'">'+esc(req.status||'new')+'</span></div>'
+      +(req.address?'<div style="font-size:12px;color:var(--muted);margin-bottom:6px">&#x1F4CD; '+esc(req.address)+'</div>':'')
       +(req.block?'<div style="background:rgba(196,127,0,.1);border:1px solid rgba(196,127,0,.25);border-radius:6px;padding:7px 10px;font-size:12px;color:var(--accent);margin-bottom:8px">&#x1F4C5; '+esc(req.block)+'</div>':'')
+      +(req.noAppointmentNeeded?'<div style="background:rgba(26,122,74,.08);border:1px solid rgba(26,122,74,.2);border-radius:6px;padding:5px 10px;font-size:11px;color:#166534;margin-bottom:8px">&#x1F511; No appointment needed</div>':'')
       +'<div style="font-size:13px;color:var(--muted);margin-bottom:10px;line-height:1.5">'+esc(req.description||'')+'</div>'
       +(req.photo?'<img src="'+req.photo+'" style="max-width:140px;border-radius:8px;margin-bottom:10px;display:block" alt="Photo">':'')
-      +'<div class="flex flex-wrap" style="gap:8px">'
-      +(req.status!=='done'?'<button class="btn btn-primary btn-sm" onclick="openLinkRequest('+idx+')">&#x1F517; Link to Job</button>':'')
-      +'<button class="btn btn-secondary btn-sm" onclick="openMsgClient('+idx+')">[msg] Message</button></div>'
-      +((req.messages||[]).length?'<div style="margin-top:10px;padding:8px 12px;background:var(--surface2);border-radius:8px;font-size:12px;border:1px solid var(--border)">'
-        +req.messages.map(function(m){ return '<div style="margin-bottom:4px"><strong style="color:var(--accent)">'+esc(m.from)+':</strong> '+esc(m.text)+'</div>'; }).join('')+'</div>':'')
+      +'<div class="req-btns flex flex-wrap" style="gap:8px" data-id="'+esc(req.id)+'">'
+      +(req.status==='new'?'<button class="btn btn-primary btn-sm req-action" data-action="link">&#x1F517; Link to Job</button>':'')
+      +(req.status==='linked'?'<button class="btn btn-success btn-sm req-action" data-action="notify">&#x2705; Notify</button>':'')
+      +'<button class="btn btn-secondary btn-sm req-action" data-action="msg">&#x1F4AC; Message</button>'
+      +'<button class="btn btn-danger btn-xs req-action" data-action="del" style="padding:4px 8px">&#x2715;</button>'
+      +'</div>'
+      +((req.messages||[]).length?'<div style="margin-top:10px;padding:8px 12px;background:var(--surface2);border-radius:8px;font-size:12px;border:1px solid var(--border)">'+req.messages.map(function(m){ return '<div style="margin-bottom:4px"><strong style="color:var(--accent)">'+esc(m.from)+':</strong> '+esc(m.text)+'</div>'; }).join('')+'</div>':'')
       +'</div>';
   }).join('');
+  el.querySelectorAll('.req-btns').forEach(function(div){
+    var rid=div.getAttribute('data-id');
+    div.querySelectorAll('.req-action').forEach(function(btn){
+      btn.onclick=function(){
+        var a=this.getAttribute('data-action');
+        if(a==='link') openLinkRequest(rid);
+        else if(a==='notify') notifyClientAssigned(rid);
+        else if(a==='msg') openMsgClient(rid);
+        else if(a==='del') deleteRequest(rid);
+      };
+    });
+  });
 }
-function openLinkRequest(idx){
-  var req=_requests[idx];
-  document.getElementById('lr-req-idx').value=idx;
+function openLinkRequest(reqId){
+  var req=_requests.find(function(r){ return r.id===reqId; });
+  if(!req){ alert('Request not found. Please refresh and try again.'); return; }
+  document.getElementById('lr-req-idx').value=reqId;
   document.getElementById('lr-block-display').textContent=req.block?'Requested: '+req.block:'No specific time requested';
   document.getElementById('lr-prop-search').value=''; document.getElementById('lr-prop-id').value='';
   var s=document.getElementById('lr-prop-selected'); if(s) s.style.display='none';
   populateSelect(document.getElementById('lr-tech'),state.technicians.filter(function(t){ return t.status==='active'; }),'id',function(t){ return t.name; },'Select technician...');
   document.getElementById('lr-notes').value=req.description||'';
+  var lb=document.getElementById('lr-block'); if(lb) lb.value=req.block||'';
   openModal('modal-link-request');
 }
 function lrPropSearch(){ buildPropAC('lr-prop-search','lr-ac-list','lr-prop-id','lr-prop-selected'); }
@@ -1216,22 +1340,26 @@ function saveLinkRequest(){
   closeModal('modal-link-request'); renderRequestsPage();
   alert('[OK] Job created and assigned to '+tech.name+'!');
 }
-function openMsgClient(idx){
-  document.getElementById('mc-req-idx').value=idx;
+function openMsgClient(reqId){
+  var req=_requests.find(function(r){ return r.id===reqId; });
+  if(!req){ alert('Request not found. Please refresh.'); return; }
+  document.getElementById('mc-req-idx').value=reqId;
   document.getElementById('mc-msg').value='';
   openModal('modal-msg-client');
 }
 function sendMsgClient(){
-  var idx=+document.getElementById('mc-req-idx').value; var req=_requests[idx];
+  var reqId=document.getElementById('mc-req-idx').value;
+  var req=_requests.find(function(r){ return r.id===reqId; });
+  if(!req) return;
   var msg=document.getElementById('mc-msg').value.trim(); if(!msg){ alert('Enter a message.'); return; }
   if(!req.messages) req.messages=[];
   req.messages.push({from:'Admin',text:msg,at:new Date().toISOString()});
   if(req.phone) sendSMS(req.phone,'WillowPA Maintenance: '+msg);
-  fetch('requests.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(req)}).catch(function(){});
-  closeModal('modal-msg-client'); renderRequestsPage();
+  fetch('requests.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:req.id,messages:req.messages})})
+  .then(function(r){ return r.json(); })
+  .then(function(){ closeModal('modal-msg-client'); renderRequestsPage(); })
+  .catch(function(){ closeModal('modal-msg-client'); renderRequestsPage(); });
 }
-
-//  AVAILABILITY PAGE 
 function renderAvailabilityPage(){
   fetch('availability.php').then(function(r){ return r.json(); })
   .then(function(d){ renderAvailUI(d); })
@@ -1358,7 +1486,322 @@ function seedDemo(){
 }
 
 //  BOOT 
-seedDemo();
-initAdminUser();
-if(currentUser) setCurrentUser(currentUser);
-else document.getElementById('login-screen').style.display='flex';
+fetch('state.php')
+.then(function(r){ return r.json(); })
+.then(function(d){
+  if(d.ok && d.state && d.state._initialized){
+    state = d.state;
+  } else {
+    initAdminUser();
+    save();
+  }
+  if(currentUser){
+    var found=state.users.find(function(u){ return u.id===currentUser.id&&u.status==='active'; });
+    if(found) setCurrentUser(found);
+    else { currentUser=null; document.getElementById('login-screen').style.display='flex'; }
+  } else {
+    document.getElementById('login-screen').style.display='flex';
+  }
+})
+.catch(function(){
+  initAdminUser();
+  if(currentUser) setCurrentUser(currentUser);
+  else document.getElementById('login-screen').style.display='flex';
+});
+
+function notifyClientAssigned(reqId){
+  var req=_requests.find(function(r){ return r.id===reqId; }); if(!req) return;
+  var job=state.jobs.find(function(j){ return j.id===req.linkedJobId; });
+  var tech=job?getTech(job.techId):null;
+  var block=req.block||(job&&job.block)||'';
+  var msg='WillowPA Maintenance: A technician has been assigned to your service request.'
+    +(tech?' Your technician is '+tech.name+'.':'')
+    +(block?' Estimated time: '+block:' We will confirm the appointment time shortly.')
+    +' Questions? Reply to this number.';
+  document.getElementById('mc-req-idx').value=reqId;
+  document.getElementById('mc-msg').value=msg;
+  openModal('modal-msg-client');
+}
+
+//  ADMIN APPROVE / SEND BACK
+function adminApproveJob(jobId){
+  var job=getJob(jobId); if(!job) return;
+  job.status='complete';
+  save();
+  refreshJobCard(jobId);
+  renderAllJobs();
+  // SMS to client with summary
+  if(job.clientPhone){
+    var prop=getProp(job.propId);
+    var hrs=jobTotalHours(job), exp=jobTotalExp(job), labor=jobTotalLabor(job);
+    var msg='WillowPA Maintenance: Your service at '+(prop?prop.name:'your property')+' is complete.'+
+      ' Hours: '+hrs.toFixed(2)+', Expenses: $'+exp.toFixed(2)+', Total: $'+(labor+exp).toFixed(2)+'.';
+    if(job.stripeLink) msg+=' Pay: '+job.stripeLink;
+    else if(job.shareToken) msg+=' View report: '+window.location.origin+'/view.php?token='+job.shareToken;
+    sendSMS(job.clientPhone, msg);
+  }
+}
+function adminSendBackJob(jobId){
+  var job=getJob(jobId); if(!job) return;
+  job.status='open'; job.completedDate=null;
+  save();
+  refreshJobCard(jobId);
+}
+
+//  ON MY WAY
+function sendOnMyWay(jobId, minutes){
+  var job=getJob(jobId); if(!job||!job.clientPhone){ alert('No client phone on this job.'); return; }
+  var prop=getProp(job.propId);
+  sendSMS(job.clientPhone,'WillowPA Maintenance: Your technician is on the way and will arrive in approximately '+minutes+' minute'+(minutes===1?'':'s')+'.'+(prop?' Location: '+prop.name:''));
+  alert('SMS sent: On My Way ('+minutes+' min)');
+}
+
+//  MESSAGE CLIENT
+function sendJobClientMessage(jobId){
+  var job=getJob(jobId); if(!job||!job.clientPhone){ alert('No client phone on this job.'); return; }
+  var msg=((document.getElementById('msg-client-'+jobId)||{}).value||'').trim();
+  if(!msg){ alert('Enter a message.'); return; }
+  sendSMS(job.clientPhone,'WillowPA Maintenance: '+msg);
+  var el=document.getElementById('msg-client-'+jobId); if(el) el.value='';
+  alert('Message sent!');
+}
+
+//  DELETE JOB
+function deleteJob(jobId){
+  if(!confirm('Delete this job permanently? This cannot be undone.')) return;
+  var job=getJob(jobId);
+  var pids=(job&&job.photos||[]).map(function(p){ return p.id; });
+  state.jobs=state.jobs.filter(function(j){ return j.id!==jobId; });
+  save();
+  if(pids.length) FT_DB.delMany(pids,function(){ renderAllJobs(); });
+  else renderAllJobs();
+  updateJobsBadge();
+}
+
+//  DELETE REQUEST
+function deleteRequest(reqId){
+  if(!confirm('Delete this request permanently?')) return;
+  fetch('requests.php',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({id:reqId,status:'deleted',_delete:true})})
+  .then(function(){
+    _requests=_requests.filter(function(r){ return r.id!==reqId; });
+    renderReqList();
+    var n=_requests.filter(function(r){ return r.status==='new'; }).length;
+    var b=document.getElementById('req-badge'); if(b){ b.textContent=n; b.style.display=n>0?'inline':'none'; }
+  });
+}
+
+//  TASKS SYSTEM
+function renderTasksPage(){
+  var el=document.getElementById('page-tasks'); if(!el) return;
+  var tasks=state.tasks||[];
+  var contacts=state.taskContacts||[];
+  var today_=today();
+  // Update task badge
+  var due=tasks.filter(function(t){
+    if(t.status==='complete') return false;
+    if(!t.dueDate) return false;
+    if(t.reminderDay){
+      var d=new Date(t.dueDate); d.setDate(d.getDate()-1);
+      var rem=d.toISOString().slice(0,10);
+      return today_>=rem;
+    }
+    return today_>=t.dueDate;
+  }).length;
+  var b=document.getElementById('task-badge'); if(b){ b.textContent=due; b.style.display=due>0?'inline':'none'; }
+  // Build contacts datalist
+  var cl=contacts.map(function(c){ return '<option value="'+esc(c.name)+'">'; }).join('');
+  var h='<div class="page-header"><div class="page-title">Tasks</div></div>';
+  h+='<div style="margin-bottom:12px"><datalist id="task-contacts-list">'+cl+'</datalist>';
+  h+='<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">';
+  h+='<div class="form-group" style="flex:1;min-width:180px;margin:0"><label>Title</label><input type="text" id="new-task-title" placeholder="Task title..."></div>';
+  h+='<div class="form-group" style="width:140px;margin:0"><label>Assign To</label><input type="text" id="new-task-assignee" list="task-contacts-list" placeholder="Name..."></div>';
+  h+='<div class="form-group" style="width:130px;margin:0"><label>Due Date</label><input type="date" id="new-task-due"></div>';
+  h+='<div class="form-group" style="width:120px;margin:0"><label>Repeat</label><select id="new-task-repeat"><option value="">None</option><option value="weekly">Weekly</option><option value="biweekly">Bi-weekly</option><option value="monthly">Monthly</option></select></div>';
+  h+='<div class="form-group" style="margin:0"><label style="display:flex;align-items:center;gap:4px;cursor:pointer"><input type="checkbox" id="new-task-reminder"> Remind 1 day before</label></div>';
+  h+='<button class="btn btn-primary" onclick="saveTask()">+ Add Task</button>';
+  h+='</div>';
+  h+='<div class="form-group" style="margin-top:8px"><label>Notes</label><textarea id="new-task-notes" rows="2" placeholder="Optional notes..."></textarea></div></div>';
+  // Filter buttons
+  h+='<div style="display:flex;gap:8px;margin-bottom:12px">';
+  h+='<button class="btn btn-secondary btn-sm" onclick="renderTasksPage()" id="task-filter-all">All ('+tasks.length+')</button>';
+  h+='<button class="btn btn-secondary btn-sm" onclick="renderTasksFiltered(&quot;open&quot;)">Open ('+tasks.filter(function(t){return t.status==='open';}).length+')</button>';
+  h+='<button class="btn btn-secondary btn-sm" onclick="renderTasksFiltered(&quot;complete&quot;)">Done ('+tasks.filter(function(t){return t.status==='complete';}).length+')</button>';
+  h+='<button class="btn btn-secondary btn-sm" onclick="renderTasksFiltered(&quot;due&quot;)">Due/Upcoming ('+due+')</button>';
+  h+='</div>';
+  h+='<div id="task-list">'+buildTaskList(tasks)+'</div>';
+  el.innerHTML=h;
+}
+function renderTasksFiltered(filter){
+  var tasks=state.tasks||[];
+  var today_=today();
+  var filtered;
+  if(filter==='open') filtered=tasks.filter(function(t){ return t.status==='open'; });
+  else if(filter==='complete') filtered=tasks.filter(function(t){ return t.status==='complete'; });
+  else if(filter==='due') filtered=tasks.filter(function(t){
+    if(t.status==='complete') return false;
+    if(!t.dueDate) return false;
+    if(t.reminderDay){ var d=new Date(t.dueDate); d.setDate(d.getDate()-1); return today_>=d.toISOString().slice(0,10); }
+    return today_>=t.dueDate;
+  });
+  else filtered=tasks;
+  var el=document.getElementById('task-list'); if(el) el.innerHTML=buildTaskList(filtered);
+}
+function buildTaskList(tasks){
+  if(!tasks.length) return '<div class="empty-state"><span class="emoji">&#x2705;</span>No tasks.</div>';
+  var today_=today();
+  return tasks.slice().sort(function(a,b){ return (a.dueDate||'9999')>(b.dueDate||'9999')?1:-1; }).map(function(t){
+    var isDue=t.status==='open'&&t.dueDate&&today_>=t.dueDate;
+    var isReminder=t.status==='open'&&t.dueDate&&t.reminderDay&&(function(){ var d=new Date(t.dueDate); d.setDate(d.getDate()-1); return today_>=d.toISOString().slice(0,10)&&today_<t.dueDate; })();
+    var bg=t.status==='complete'?'rgba(34,197,94,.06)':isDue?'rgba(224,92,122,.06)':isReminder?'rgba(245,158,11,.06)':'var(--surface)';
+    var border=isDue?'1px solid rgba(224,92,122,.3)':isReminder?'1px solid rgba(245,158,11,.2)':'1px solid var(--border)';
+    var h='<div style="padding:10px 14px;border-radius:8px;margin-bottom:8px;background:'+bg+';border:'+border+'">';
+    h+='<div style="display:flex;align-items:flex-start;gap:8px">';
+    h+='<input type="checkbox" style="margin-top:3px;cursor:pointer" '+(t.status==='complete'?'checked':'')+' onchange="toggleTaskStatus(&quot;'+t.id+'&quot;)">';
+    h+='<div style="flex:1">';
+    h+='<div style="font-weight:600;'+(t.status==='complete'?'text-decoration:line-through;opacity:.5':'')+'">'+(isDue?'&#x26A0;&#xFE0F; ':isReminder?'&#x1F514; ':'')+esc(t.title)+'</div>';
+    if(t.assignedTo) h+='<div style="font-size:12px;color:var(--muted)">&#x1F464; '+esc(t.assignedTo)+'</div>';
+    if(t.dueDate) h+='<div style="font-size:12px;color:var(--muted)">Due: '+t.dueDate+(t.repeat?' · Repeats '+t.repeat:'')+'</div>';
+    if(t.notes) h+='<div style="font-size:12px;margin-top:4px;color:var(--muted)">'+esc(t.notes)+'</div>';
+    h+='</div>';
+    h+='<button class="btn btn-danger btn-xs" onclick="deleteTask(&quot;'+t.id+'&quot;)">&#x2715;</button>';
+    h+='</div></div>';
+    return h;
+  }).join('');
+}
+function saveTask(){
+  var title=((document.getElementById('new-task-title')||{}).value||'').trim();
+  if(!title){ alert('Task title required.'); return; }
+  var assignee=((document.getElementById('new-task-assignee')||{}).value||'').trim();
+  var due=((document.getElementById('new-task-due')||{}).value||'');
+  var repeat=((document.getElementById('new-task-repeat')||{}).value||'');
+  var reminder=(document.getElementById('new-task-reminder')||{}).checked||false;
+  var notes=((document.getElementById('new-task-notes')||{}).value||'').trim();
+  // Add new contact if not known
+  if(assignee){
+    var contacts=state.taskContacts||[];
+    if(!contacts.find(function(c){ return c.name===assignee; })){
+      contacts.push({id:'tc_'+Date.now(),name:assignee,phone:''});
+      state.taskContacts=contacts;
+    }
+  }
+  var task={id:'task_'+Date.now(),title:title,notes:notes,dueDate:due,assignedTo:assignee,repeat:repeat,repeatDays:'',reminderDay:reminder,status:'open',createdAt:new Date().toISOString()};
+  if(!state.tasks) state.tasks=[];
+  state.tasks.push(task);
+  save();
+  // Clear form
+  ['new-task-title','new-task-assignee','new-task-due','new-task-notes'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+  var rs=document.getElementById('new-task-repeat'); if(rs) rs.value='';
+  var rb=document.getElementById('new-task-reminder'); if(rb) rb.checked=false;
+  renderTasksPage();
+}
+function toggleTaskStatus(taskId){
+  var task=(state.tasks||[]).find(function(t){ return t.id===taskId; });
+  if(!task) return;
+  if(task.status==='complete'){
+    task.status='open'; task.completedDate=null;
+  } else {
+    task.status='complete'; task.completedDate=today();
+    // Handle repeat
+    if(task.repeat&&task.dueDate){
+      var d=new Date(task.dueDate);
+      if(task.repeat==='weekly') d.setDate(d.getDate()+7);
+      else if(task.repeat==='biweekly') d.setDate(d.getDate()+14);
+      else if(task.repeat==='monthly') d.setMonth(d.getMonth()+1);
+      var newTask={id:'task_'+Date.now(),title:task.title,notes:task.notes,dueDate:d.toISOString().slice(0,10),assignedTo:task.assignedTo,repeat:task.repeat,repeatDays:task.repeatDays||'',reminderDay:task.reminderDay,status:'open',createdAt:new Date().toISOString()};
+      state.tasks.push(newTask);
+    }
+  }
+  save();
+  renderTasksPage();
+}
+function deleteTask(taskId){
+  if(!confirm('Delete this task?')) return;
+  state.tasks=(state.tasks||[]).filter(function(t){ return t.id!==taskId; });
+  save(); renderTasksPage();
+}
+
+//  REPHRASE WORK DESCRIPTION
+function rephraseWorkDesc(jobId){
+  var el=document.getElementById('ah-desc-'+jobId);
+  if(!el||!el.value.trim()){ alert('Type a work description first, then click Rephrase.'); return; }
+  var apiKey=getApiKey();
+  if(!apiKey){ alert('No API key configured. Go to Settings.'); return; }
+  var original=el.value.trim();
+  el.disabled=true; el.value='Rephrasing...';
+  fetch('proxy.php',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      model:'claude-sonnet-4-20250514',
+      max_tokens:300,
+      messages:[{role:'user',content:'Rephrase this field technician work note into clear, professional language suitable for a maintenance report. Keep it concise (1-3 sentences). Only return the rephrased text, nothing else. Original note: '+original}]
+    })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    el.disabled=false;
+    var reply='';
+    if(data.content&&data.content.length) data.content.forEach(function(c){ if(c.type==='text') reply+=c.text; });
+    el.value=reply.trim()||original;
+  })
+  .catch(function(){ el.disabled=false; el.value=original; alert('Rephrase failed.'); });
+}
+
+//  BACKUP BROWSER
+function loadBackupList(){
+  var el=document.getElementById('backup-list'); if(!el) return;
+  el.innerHTML='<div style="color:var(--muted);font-size:13px">Loading backups...</div>';
+  fetch('backup_list.php')
+  .then(function(r){ return r.json(); })
+  .then(function(files){
+    if(files._error){ el.innerHTML='<div style="color:var(--accent3);font-size:13px">[!] '+files._error+'</div>'; return; }
+    if(!Array.isArray(files)||!files.length){ el.innerHTML='<div style="color:var(--muted);font-size:13px">No backup files found in data/backups/</div>'; return; }
+    el.innerHTML=files.map(function(f){
+      var row='<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">';
+      row+='<span style="flex:1;font-family:var(--fm);font-size:12px">'+esc(f.name)+'</span>';
+      row+='<span style="color:var(--muted);font-size:11px">'+f.size+'</span>';
+      row+='<span style="color:var(--muted);font-size:11px">'+f.date+'</span>';
+      row+='<button class="btn btn-secondary btn-xs" onclick="window._previewBackup(this)" data-fn="'+esc(f.name)+'">Preview</button>';
+      row+='<button class="btn btn-primary btn-xs" onclick="window._restoreBackup(this)" data-fn="'+esc(f.name)+'">Restore</button>';
+      row+='</div>';
+      return row;
+    }).join('');
+  })
+  .catch(function(){ el.innerHTML='<div style="color:var(--accent3);font-size:13px">[!] Could not load backup list. Make sure backup_list.php is on the server.</div>'; });
+}
+// button onclick wrappers using data-fn attribute
+window._previewBackup=function(btn){ previewBackup(btn.getAttribute('data-fn')); };
+window._restoreBackup=function(btn){ restoreBackup(btn.getAttribute('data-fn')); };
+
+function previewBackup(filename){
+  fetch('backup_list.php?preview='+encodeURIComponent(filename))
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    var info='Backup: '+filename+'\n\nContents:\n'
+      +'  Jobs: '+(data.jobs||[]).length+'\n'
+      +'  Properties: '+(data.properties||[]).length+'\n'
+      +'  Owners: '+(data.owners||[]).length+'\n'
+      +'  Technicians: '+(data.technicians||[]).length+'\n'
+      +'  Saved at: '+(data._savedAt||'unknown');
+    alert(info);
+  })
+  .catch(function(){ alert('Could not preview '+filename); });
+}
+function restoreBackup(filename){
+  if(!confirm('Restore from backup: '+filename+'?\n\nThis will REPLACE all current data. This cannot be undone.')) return;
+  if(!confirm('Are you 100% sure? All current jobs, hours and data will be replaced.')) return;
+  fetch('backup_list.php?restore='+encodeURIComponent(filename))
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    if(data.ok){
+      state=data.state;
+      save();
+      alert('[OK] Restored from '+filename+'! Reloading...');
+      setTimeout(function(){ location.reload(); },800);
+    } else {
+      alert('[!] Restore failed: '+(data.error||'unknown error'));
+    }
+  })
+  .catch(function(){ alert('Restore request failed.'); });
+}
