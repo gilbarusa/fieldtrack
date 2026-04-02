@@ -166,13 +166,15 @@ function doLogin(){
   var err=document.getElementById('login-err'); err.style.display='none';
   var user=state.users.find(function(u){ return u.username===uname&&u.password===pass&&u.status==='active'; });
   if(!user){ err.style.display='block'; return; }
-  setCurrentUser(user);
+  setCurrentUser(user, true);
 }
-function setCurrentUser(user){
+function setCurrentUser(user, fromLogin){
   currentUser=user;
-  var remember=(document.getElementById('remember-me')||{}).checked;
-  if(remember){ localStorage.setItem('ft_remember',JSON.stringify({id:user.id})); }
-  else { localStorage.removeItem('ft_remember'); }
+  if(fromLogin){
+    var remember=(document.getElementById('remember-me')||{}).checked;
+    if(remember){ localStorage.setItem('ft_remember',JSON.stringify({id:user.id})); }
+    else { localStorage.removeItem('ft_remember'); }
+  }
   sessionStorage.setItem('ft_session',JSON.stringify({id:user.id}));
   document.getElementById('topbar-name').textContent=user.name;
   document.getElementById('topbar-role').textContent=user.role==='admin'?'Admin':'Tech';
